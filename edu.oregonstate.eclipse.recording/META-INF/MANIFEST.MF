@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.team.core,
  org.eclipse.core.filesystem,
  edu.illinois.codingspectator.monitor.core,
- edu.illinois.codingspectator.saferecorder,
+ edu.oregonstate.cope.eclipse.saferecorder,
  edu.illinois.codingspectator.data,
  edu.oregonstate.cope.eclipse.operations;bundle-version="1.0.0",
  edu.oregonstate.cope.eclipse.helpers;bundle-version="1.0.0"
