@@ -16,10 +16,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.tmatesoft.svn.core.SVNException;
-import org.tmatesoft.svn.core.internal.wc.admin.SVNAdminArea;
-import org.tmatesoft.svn.core.internal.wc.admin.SVNAdminAreaFactory;
-import org.tmatesoft.svn.core.internal.wc.admin.SVNEntry;
 
 import edu.illinois.codingtracker.helpers.FileRevision;
 import edu.illinois.codingtracker.helpers.ResourceHelper;
@@ -61,7 +57,10 @@ public class ResourceListener extends BasicListener implements IResourceListener
 
 	//SVN entries caching
 
-	private final Map<String, SVNAdminArea> svnAdminAreaCache= new HashMap<String, SVNAdminArea>();
+	/*
+	 * MC remove svn code
+	 */
+//	private final Map<String, SVNAdminArea> svnAdminAreaCache= new HashMap<String, SVNAdminArea>();
 
 
 	public static void register() {
@@ -114,7 +113,10 @@ public class ResourceListener extends BasicListener implements IResourceListener
 	@Override
 	public void refreshedResource(IResource resource) {
 		if (!isRefactoring) {
-			svnAdminAreaCache.clear(); //Clear SVN entries cache before processing
+			/*
+			 * MC remove svn code
+			 */
+			//svnAdminAreaCache.clear(); //Clear SVN entries cache before processing
 			calculateSets();
 			recordSets();
 			updateKnownFiles();
@@ -197,26 +199,33 @@ public class ResourceListener extends BasicListener implements IResourceListener
 
 	private void calculateSets() {
 		//should be done only in this order
-		calculateSVNSets();
+		
+		/*
+		 * MC remove svn code
+		 */
+		//calculateSVNSets();
 		calculateExternallyModifiedJavaFiles();
 	}
 
-	private void calculateSVNSets() {
-		for (IFile file : svnChangedJavaFiles) {
-			FileRevision fileRevision= getSVNFileRevision(file);
-			if (externallyChangedJavaFiles.contains(file)) {
-				updatedJavaFileRevisions.add(fileRevision); //if both the java file and its svn storage have changed, then its an update
-			} else if (!externallyAddedJavaFiles.contains(file)) {
-				svnCommittedJavaFileRevisions.add(fileRevision); //if only svn storage of a java file has changed, its a commit
-			}
-		}
-		for (IFile file : svnAddedJavaFiles) {
-			//if only svn storage was added for a file, its an initial commit
-			if (!externallyAddedJavaFiles.contains(file) && !externallyChangedJavaFiles.contains(file)) {
-				svnInitiallyCommittedJavaFileRevisions.add(getSVNFileRevision(file));
-			}
-		}
-	}
+	/*
+	 * MC remove svn code
+	 */
+//	private void calculateSVNSets() {
+//		for (IFile file : svnChangedJavaFiles) {
+//			FileRevision fileRevision= getSVNFileRevision(file);
+//			if (externallyChangedJavaFiles.contains(file)) {
+//				updatedJavaFileRevisions.add(fileRevision); //if both the java file and its svn storage have changed, then its an update
+//			} else if (!externallyAddedJavaFiles.contains(file)) {
+//				svnCommittedJavaFileRevisions.add(fileRevision); //if only svn storage of a java file has changed, its a commit
+//			}
+//		}
+//		for (IFile file : svnAddedJavaFiles) {
+//			//if only svn storage was added for a file, its an initial commit
+//			if (!externallyAddedJavaFiles.contains(file) && !externallyChangedJavaFiles.contains(file)) {
+//				svnInitiallyCommittedJavaFileRevisions.add(getSVNFileRevision(file));
+//			}
+//		}
+//	}
 
 	private void calculateExternallyModifiedJavaFiles() {
 		for (IFile file : externallyChangedJavaFiles) {
@@ -259,28 +268,31 @@ public class ResourceListener extends BasicListener implements IResourceListener
 		svnCommittedJavaFileRevisions.clear();
 	}
 
-	private FileRevision getSVNFileRevision(IFile file) {
-		FileRevision fileRevision= new FileRevision(file, "0", "0"); //default file revision
-		try {
-			IContainer parent= file.getParent();
-			String parentPath= ResourceHelper.getPortableResourcePath(parent);
-			SVNAdminArea svnAdminArea= svnAdminAreaCache.get(parentPath);
-			if (svnAdminArea == null) {
-				svnAdminArea= SVNAdminAreaFactory.open(ResourceHelper.getFileForResource(parent), Level.OFF);
-			}
-			if (svnAdminArea != null) {
-				svnAdminAreaCache.put(parentPath, svnAdminArea);
-				SVNEntry svnEntry= svnAdminArea.getEntry(file.getName(), true);
-				if (svnEntry != null) {
-					fileRevision= new FileRevision(file, String.valueOf(svnEntry.getRevision()), String.valueOf(svnEntry.getCommittedRevision()));
-				}
-			}
-		} catch (SVNException e) {
-			//ignore SVN exceptions
-		} catch (Exception e) {
-			//ignore all other exceptions as well
-		}
-		return fileRevision;
-	}
+	/*
+	 * MC remove svn code
+	 */
+//	private FileRevision getSVNFileRevision(IFile file) {
+//		FileRevision fileRevision= new FileRevision(file, "0", "0"); //default file revision
+//		try {
+//			IContainer parent= file.getParent();
+//			String parentPath= ResourceHelper.getPortableResourcePath(parent);
+//			SVNAdminArea svnAdminArea= svnAdminAreaCache.get(parentPath);
+//			if (svnAdminArea == null) {
+//				svnAdminArea= SVNAdminAreaFactory.open(ResourceHelper.getFileForResource(parent), Level.OFF);
+//			}
+//			if (svnAdminArea != null) {
+//				svnAdminAreaCache.put(parentPath, svnAdminArea);
+//				SVNEntry svnEntry= svnAdminArea.getEntry(file.getName(), true);
+//				if (svnEntry != null) {
+//					fileRevision= new FileRevision(file, String.valueOf(svnEntry.getRevision()), String.valueOf(svnEntry.getCommittedRevision()));
+//				}
+//			}
+//		} catch (SVNException e) {
+//			//ignore SVN exceptions
+//		} catch (Exception e) {
+//			//ignore all other exceptions as well
+//		}
+//		return fileRevision;
+//	}
 
 }

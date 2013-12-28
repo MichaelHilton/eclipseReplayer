@@ -13,7 +13,6 @@ Require-Bundle: org.eclipse.jdt.core,
  edu.illinois.codingspectator.monitor.core,
  edu.illinois.codingspectator.saferecorder,
  edu.illinois.codingspectator.data,
- org.tmatesoft.svn.eclipse,
  edu.oregonstate.cope.eclipse.operations;bundle-version="1.0.0",
  edu.oregonstate.cope.eclipse.helpers;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
