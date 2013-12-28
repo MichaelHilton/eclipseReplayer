@@ -29,7 +29,11 @@ public class SafeRecorder {
 		mainRecordFilePath= CodingSpectatorDataPlugin.getVersionedStorageLocation().append(relativePathToMainRecordFile).toOSString();
 		mainRecordFile= new File(mainRecordFilePath);
 		currentRecordFile= mainRecordFile;
-		RecorderSubmitterListener.addSafeRecorderInstance(this);
+		
+		/*
+		 * MC removed code related to event upload
+		 */
+//		RecorderSubmitterListener.addSafeRecorderInstance(this);
 	}
 
 	/**
