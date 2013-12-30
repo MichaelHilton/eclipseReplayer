@@ -9,14 +9,12 @@ import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
-import org.eclipse.compare.contentmergeviewer.TokenComparator;
 import org.eclipse.compare.internal.MergeViewerContentProvider;
 import org.eclipse.compare.internal.merge.DocumentMerger;
 import org.eclipse.compare.internal.merge.DocumentMerger.Diff;
 import org.eclipse.compare.internal.merge.DocumentMerger.IDocumentMergerInput;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.ui.compare.JavaTokenComparator;
-import org.eclipse.jdt.internal.ui.compare.JavaTokenComparator.ITokenComparatorFactory;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -139,12 +137,17 @@ public class SnapshotDifferenceCalculator {
 
 			@Override
 			public ITokenComparator createTokenComparator(String s) {
-				return new JavaTokenComparator(s, new ITokenComparatorFactory() {
-					@Override
-					public ITokenComparator createTokenComparator(String text) {
-						return new TokenComparator(text);
-					}
-				});
+				/*
+				 * MC update the JavaTokenComparator usage to Kepler version
+				 */
+//				return new JavaTokenComparator(s, new ITokenComparatorFactory() {
+//					@Override
+//					public ITokenComparator createTokenComparator(String text) {
+//						return new TokenComparator(text);
+//					}
+//				});
+				
+				return new JavaTokenComparator(s);
 			}
 
 			@Override
