@@ -3,17 +3,32 @@
  */
 package edu.illinois.codingtracker.operations.textchanges;
 
-import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoManager;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.UIPlugin;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.MultiPageEditorPart;
+import org.json.simple.JSONObject;
 
 import edu.illinois.codingtracker.compare.helpers.EditorHelper;
 import edu.illinois.codingtracker.helpers.Configuration;
@@ -37,6 +52,8 @@ public abstract class TextChangeOperation extends UserOperation {
 	protected int offset;
 
 	protected int length;
+	
+	protected String fileName;
 
 	//The following fields are computed during replay, do not serialize/deserialize them!
 
@@ -106,6 +123,17 @@ public abstract class TextChangeOperation extends UserOperation {
 		offset= operationLexer.readInt();
 		length= operationLexer.readInt();
 	}
+	
+	 @Override
+	 public void parse(JSONObject value) {
+	 	fileName = (String) value.get("entityAddress");
+	 	replacedText= "";
+	 	newText= (String) value.get("text");
+	 	long offsetL = (Long) value.get("offset");
+	 	offset= (int) offsetL;  
+	 	long lengthL =  (Long) value.get("len");
+	 	length= (int)lengthL;
+	 }
 
 	@Override
 	public void replay() throws BadLocationException, ExecutionException {
@@ -114,9 +142,9 @@ public abstract class TextChangeOperation extends UserOperation {
 			isRecordedWhileRefactoring= true;
 		} else {
 			updateCurrentState();
-			preReplay();
+			//preReplay();
 			replayTextChange();
-			postReplay();
+			//postReplay();
 		}
 	}
 
@@ -164,19 +192,66 @@ public abstract class TextChangeOperation extends UserOperation {
 		}
 	}
 
-	private void updateCurrentState() {
-		EditorHelper.activateEditor(currentEditor);
-		if (currentEditor instanceof CompareEditor) {
-			CompareEditor compareEditor= (CompareEditor)currentEditor;
-			//HACKED DEPENDENCY currentViewer= EditorHelper.getEditingSourceViewer(compareEditor);
-			editedFile= EditorHelper.getEditedJavaFile(compareEditor);
-		} else if (currentEditor instanceof AbstractDecoratedTextEditor) {
-			AbstractDecoratedTextEditor abstractDecoratedTextEditor= (AbstractDecoratedTextEditor)currentEditor;
-			//HACKED DEPENDENCY currentViewer= EditorHelper.getEditingSourceViewer(abstractDecoratedTextEditor);
-			editedFile= EditorHelper.getEditedJavaFile(abstractDecoratedTextEditor);
-		}
-		currentDocument= currentViewer.getDocument();
-	}
+	 private void updateCurrentState() {
+		 	EditorHelper.activateEditor(currentEditor);
+//			 if (currentEditor instanceof CompareEditor) {
+//			 //HACKEd DEPENDENCY currentViewer= EditorHelper.getEditingSourceViewer((CompareEditor)currentEditor);
+//			 } else if (currentEditor instanceof AbstractDecoratedTextEditor) {
+//			 //HACKED DEPENDENCY currentViewer= EditorHelper.getEditingSourceViewer((AbstractDecoratedTextEditor)currentEditor);
+//			 }
+		 	 
+		 	//currentViewer = currentEditor.
+		 	//TODO Populate currentViewer
+		 	currentDocument= getDocumentForEditor();
+		 }
+		  
+		 private IDocument getDocumentForEditor() {
+		 	IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		 	IEditorReference[] editorReferences = activeWindow.getActivePage().getEditorReferences();
+		 	for (IEditorReference editorReference : editorReferences) {
+		 	 ITextFileBufferManager bufferManager = FileBuffers.getTextFileBufferManager();
+		 	 IDocument document = getDocumentForEditor(editorReference);
+		 	 if (document == null)
+		 	 continue;
+		 	  
+		 	 ITextFileBuffer textFileBuffer = bufferManager.getTextFileBuffer(document);
+		 	 String fileLocation = textFileBuffer.getLocation().toPortableString();
+		 	 if (fileLocation.equals(fileName)) {
+		 	 editorReference.getEditor(true).setFocus(); // might need to be done in UI thread
+		 	 return document;
+		 	 }
+		 	}
+		 	// open editor
+		 	return openEditor();
+		 }
+		  
+		 private IDocument openEditor() {
+		 	IWorkbenchPage page = UIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		 	IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fileName));
+		 	IEditorDescriptor desc = PlatformUI.getWorkbench().
+		 	 getEditorRegistry().getDefaultEditor(file.getName());
+		 	try {
+		 	 IEditorPart openedEditor = page.openEditor(new FileEditorInput(file), desc.getId());
+		 	 return getDocumentForEditor(openedEditor);
+		 	} catch (PartInitException e) {
+		 	}
+		 	return null;
+		 }
+
+		 private IDocument getDocumentForEditor(IEditorReference editorReference) {
+		 	IEditorPart editorPart = editorReference.getEditor(true);
+		 	return getDocumentForEditor(editorPart);
+		 }
+
+		 private IDocument getDocumentForEditor(IEditorPart editorPart) {
+		 	if (editorPart instanceof MultiPageEditorPart) {
+		 	 //((MultiPageEditorPart) editorPart).addPageChangedListener(new MultiEditorPageChangedListener());
+		 	 return null;
+		 	}
+		 	ISourceViewer sourceViewer = (ISourceViewer) editorPart.getAdapter(ITextOperationTarget.class);
+		 	IDocument document = sourceViewer.getDocument();
+		 	return document;
+		 }
 
 	/**
 	 * Valid only during replay.

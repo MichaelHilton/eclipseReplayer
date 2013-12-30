@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.ui.IEditorPart;
+import org.json.simple.JSONObject;
 
 import edu.illinois.codingtracker.helpers.Configuration;
 import edu.illinois.codingtracker.helpers.Debugger;
@@ -92,5 +93,10 @@ public abstract class UserOperation {
 	protected abstract void initializeFrom(OperationLexer operationLexer);
 
 	public abstract void replay() throws Exception;
+	
+	public void parse(JSONObject value)
+	{
+		timestamp= System.currentTimeMillis();
+	}
 
 }

@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.IParent;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.json.simple.JSONObject;
 
 import edu.illinois.codingtracker.compare.helpers.EditorHelper;
 import edu.illinois.codingtracker.helpers.ResourceHelper;
@@ -76,6 +77,11 @@ public abstract class ResourceOperation extends UserOperation {
 	@Override
 	protected void initializeFrom(OperationLexer operationLexer) {
 		resourcePath= operationLexer.readString();
+	}
+	
+	@Override
+	public void parse(JSONObject value) {
+		resourcePath= (String) value.get("entityAddress");
 	}
 
 	protected void createContainer() throws CoreException {
