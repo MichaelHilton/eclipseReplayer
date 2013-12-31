@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.illinois.codingtracker.tests
-Bundle-SymbolicName: edu.oregonstate.codingtracker.tests
+Bundle-SymbolicName: edu.oregonstate.cope.codingtracker.tests
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
