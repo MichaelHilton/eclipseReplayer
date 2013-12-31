@@ -8,7 +8,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 
-import edu.illinois.codingtracker.listeners.BasicListener;
 import edu.illinois.codingtracker.operations.textchanges.PerformedTextChangeOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
 import edu.illinois.codingtracker.operations.textchanges.UndoneTextChangeOperation;
@@ -273,7 +272,10 @@ public class CoherentTextChange implements Cloneable {
 
 	private boolean isCurrentEventUndoing() {
 		//The first part is for online AST inferencing, the second part is for AST inferencing while replaying.
-		return BasicListener.isUndoing || UndoneTextChangeOperation.isReplaying;
+		/*
+		 * MC commented because of depency to CS listeners
+		 */
+		return /*BasicListener.isUndoing ||*/ UndoneTextChangeOperation.isReplaying;
 	}
 
 	public PerformedTextChangeOperation createTextChangeOperation() {
