@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.illinois.codingspectator.saferecorder.SafeRecorderPlugin
 Bundle-Vendor: University of Illinois
 Require-Bundle: org.eclipse.core.runtime,
- edu.illinois.codingspectator.data,
+ edu.oregonstate.cope.eclipse.data,
  edu.oregonstate.cope.eclipse.helpers;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
