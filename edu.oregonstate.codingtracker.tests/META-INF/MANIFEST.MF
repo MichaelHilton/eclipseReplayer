@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: edu.illinois.codingtracker.tests
+Bundle-SymbolicName: edu.oregonstate.codingtracker.tests
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ edu.oregonstate.eclipse.recording;bundle-version="1.0.0",
+ org.junit;bundle-version="4.11.0",
+ edu.oregonstate.cope.eclipse.helpers;bundle-version="1.0.0",
+ edu.oregonstate.cope.eclipse.operations;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: University of Illinois
