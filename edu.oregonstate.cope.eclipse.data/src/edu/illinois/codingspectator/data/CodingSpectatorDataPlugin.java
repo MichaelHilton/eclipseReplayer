@@ -18,7 +18,7 @@ import org.osgi.framework.Version;
 public class CodingSpectatorDataPlugin extends Plugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID= "edu.illinois.codingspectator.data"; //$NON-NLS-1$
+	public static final String PLUGIN_ID= "edu.oregonstate.cope.eclipse.data"; //$NON-NLS-1$
 
 	// The shared instance
 	private static CodingSpectatorDataPlugin plugin;

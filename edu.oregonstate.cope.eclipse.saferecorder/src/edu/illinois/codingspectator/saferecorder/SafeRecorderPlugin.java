@@ -18,7 +18,7 @@ import edu.illinois.codingspectator.data.CodingSpectatorDataPlugin;
 public class SafeRecorderPlugin extends Plugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID= "edu.illinois.codingspectator.saferecorder"; //$NON-NLS-1$
+	public static final String PLUGIN_ID= "edu.oregonstate.cope.eclipse.saferecorder"; //$NON-NLS-1$
 
 	// The shared instance
 	private static SafeRecorderPlugin plugin;
