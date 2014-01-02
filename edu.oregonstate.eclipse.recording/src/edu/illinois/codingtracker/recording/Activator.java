@@ -18,7 +18,7 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID= "edu.illinois.codingtracker.recording";
+	public static final String PLUGIN_ID= "edu.oregonstate.eclipse.recording";
 
 	private static Activator plugin;
 
