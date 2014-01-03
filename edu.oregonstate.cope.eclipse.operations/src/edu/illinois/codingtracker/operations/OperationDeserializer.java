@@ -20,6 +20,7 @@ import edu.illinois.codingtracker.operations.files.ClosedFileOperation;
 import edu.illinois.codingtracker.operations.files.EditedFileOperation;
 import edu.illinois.codingtracker.operations.files.EditedUnsychronizedFileOperation;
 import edu.illinois.codingtracker.operations.files.RefactoredSavedFileOperation;
+import edu.illinois.codingtracker.operations.files.SaveProjectSnapshot;
 import edu.illinois.codingtracker.operations.files.SavedFileOperation;
 import edu.illinois.codingtracker.operations.files.UpdatedFileOperation;
 import edu.illinois.codingtracker.operations.files.snapshoted.CVSCommittedFileOperation;
@@ -28,6 +29,7 @@ import edu.illinois.codingtracker.operations.files.snapshoted.NewFileOperation;
 import edu.illinois.codingtracker.operations.files.snapshoted.RefreshedFileOperation;
 import edu.illinois.codingtracker.operations.files.snapshoted.SVNCommittedFileOperation;
 import edu.illinois.codingtracker.operations.files.snapshoted.SVNInitiallyCommittedFileOperation;
+import edu.illinois.codingtracker.operations.files.snapshoted.SnapshotedFileOperation;
 import edu.illinois.codingtracker.operations.junit.TestCaseFinishedOperation;
 import edu.illinois.codingtracker.operations.junit.TestCaseStartedOperation;
 import edu.illinois.codingtracker.operations.junit.TestSessionFinishedOperation;
@@ -100,7 +102,18 @@ public class OperationDeserializer {
 			userOperation= new PerformedTextChangeOperation();
 		}else if(operationSymbol.equals("fileOpen")){
 			userOperation= new EditedFileOperation();
+		}else if(operationSymbol.equals("snapshot")){
+			userOperation= new SaveProjectSnapshot();
+		}else if(operationSymbol.equals("fileClose")){
+			userOperation= new ClosedFileOperation();
+		}else if(operationSymbol.equals("testRun")){
+			userOperation= new TestSessionStartedOperation();
+		}else if(operationSymbol.equals("normalLaunch")){
+			userOperation= new LaunchedApplicationOperation();
+		}else if(operationSymbol.equals("debugLaunch")){
+			userOperation= new LaunchedApplicationOperation();
 		}
+		//normalLaunch
 		return userOperation;
 	}
 	

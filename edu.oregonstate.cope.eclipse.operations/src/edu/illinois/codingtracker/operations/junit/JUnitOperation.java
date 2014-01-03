@@ -3,6 +3,8 @@
  */
 package edu.illinois.codingtracker.operations.junit;
 
+import org.json.simple.JSONObject;
+
 import edu.illinois.codingtracker.operations.OperationLexer;
 import edu.illinois.codingtracker.operations.OperationTextChunk;
 import edu.illinois.codingtracker.operations.UserOperation;
@@ -33,6 +35,11 @@ public abstract class JUnitOperation extends UserOperation {
 	@Override
 	protected void initializeFrom(OperationLexer operationLexer) {
 		testRunName= operationLexer.readString();
+	}
+	
+	@Override
+	public void parse(JSONObject value) {
+		testRunName= (String) value.get("entityAddress");
 	}
 
 	@Override

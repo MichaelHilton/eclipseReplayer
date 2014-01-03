@@ -3,6 +3,8 @@
  */
 package edu.illinois.codingtracker.operations.starts;
 
+import org.json.simple.JSONObject;
+
 import edu.illinois.codingtracker.helpers.Configuration;
 import edu.illinois.codingtracker.operations.OperationLexer;
 import edu.illinois.codingtracker.operations.OperationSymbols;
@@ -69,6 +71,12 @@ public class LaunchedApplicationOperation extends UserOperation {
 		} else {
 			useProduct= Boolean.valueOf(operationLexer.readString());
 		}
+	}
+	
+	@Override
+	public void parse(JSONObject value) {
+		//application= (String) value.get("entityAddress");
+		//TODO MH
 	}
 
 	@Override
