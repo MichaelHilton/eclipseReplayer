@@ -92,8 +92,10 @@ public class UserOperationReplayer {
 	private volatile boolean isPaused= false;
 
 	private IEditorPart currentEditor= null;
+	
+	private ASTInferencerFacade astInferencer = ASTInferencerFacade.getInstance();
 
-
+	
 	public UserOperationReplayer(OperationSequenceView operationSequenceView) {
 		this.operationSequenceView= operationSequenceView;
 	}
