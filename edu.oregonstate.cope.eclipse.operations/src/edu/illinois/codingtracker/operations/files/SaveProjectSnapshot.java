@@ -10,8 +10,7 @@ public class SaveProjectSnapshot extends FileOperation{
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Project Snapshot";
 	}
 
 	@Override
@@ -19,5 +18,7 @@ public class SaveProjectSnapshot extends FileOperation{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 
 }

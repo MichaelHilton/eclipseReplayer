@@ -83,9 +83,8 @@ public class OperationDeserializer {
                               value = (JSONObject) parser.parse(operation);
                               String eventName = (String) value.get("eventType");
                               System.out.println(eventName);
-                              UserOperation userOperation= createEmptyUserOperation(eventName);
-                              userOperation.parse(value);
-                              userOperations.add(userOperation);
+                              addUserOperation(
+									userOperations, value, eventName);
                       } catch (Exception e) {
                               // TODO Auto-generated catch block
                               e.printStackTrace();
@@ -93,6 +92,21 @@ public class OperationDeserializer {
               }
       return userOperations;
 	}
+
+
+
+	private static void addUserOperation(
+			List<UserOperation> userOperations, JSONObject value,
+			String eventName) {
+		UserOperation userOperation= createEmptyUserOperation(eventName);
+		if(userOperation != null){ 
+		userOperation.parse(value);
+		  userOperations.add(userOperation);
+		}
+		//return userOperation;
+	}
+	
+	
 
 	private static UserOperation createEmptyUserOperation(String operationSymbol) {
 		UserOperation userOperation = null;
@@ -112,7 +126,22 @@ public class OperationDeserializer {
 			userOperation= new LaunchedApplicationOperation();
 		}else if(operationSymbol.equals("debugLaunch")){
 			userOperation= new LaunchedApplicationOperation();
+		}else if(operationSymbol.equals("launchEnd")){
+			userOperation= new LaunchedApplicationOperation();
+		}else if(operationSymbol.equals("fileSave")){
+			userOperation= new SavedFileOperation();
+		}else if(operationSymbol.equals("refactoringLaunch")){
+			userOperation= new StartedRefactoringOperation();
+		}else if(operationSymbol.equals("refactoringEnd")){
+			userOperation= new FinishedRefactoringOperation();
+		}else if(operationSymbol.equals("resourceRemoved")){
+			userOperation= new DeletedResourceOperation();
+		}else if(operationSymbol.equals("resourceAdded")){
+			userOperation= new CreatedResourceOperation();
 		}
+		//refactoringLaunch
+		
+		//userOperation= new SavedFileOperation();
 		//normalLaunch
 		return userOperation;
 	}

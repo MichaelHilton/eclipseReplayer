@@ -4,6 +4,7 @@
 package edu.illinois.codingtracker.operations.resources;
 
 import org.eclipse.core.resources.IResource;
+import org.json.simple.JSONObject;
 
 import edu.illinois.codingtracker.operations.OperationLexer;
 import edu.illinois.codingtracker.operations.OperationTextChunk;
@@ -38,6 +39,7 @@ public abstract class UpdatedResourceOperation extends BreakableResourceOperatio
 		super.initializeFrom(operationLexer);
 		updateFlags= operationLexer.readInt();
 	}
+
 
 	@Override
 	public String toString() {

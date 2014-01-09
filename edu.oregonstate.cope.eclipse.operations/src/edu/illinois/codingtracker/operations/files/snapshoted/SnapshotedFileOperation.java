@@ -5,6 +5,7 @@ package edu.illinois.codingtracker.operations.files.snapshoted;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.json.simple.JSONObject;
 
 import edu.illinois.codingtracker.helpers.ResourceHelper;
 import edu.illinois.codingtracker.operations.OperationLexer;
@@ -49,6 +50,11 @@ public abstract class SnapshotedFileOperation extends FileOperation {
 		super.initializeFrom(operationLexer);
 		fileContent= operationLexer.readString();
 	}
+	public void parse(JSONObject value) {
+		super.parse(value);
+		fileContent= (String) value.get("text");
+	}
+
 
 	@Override
 	public void replay() throws CoreException {

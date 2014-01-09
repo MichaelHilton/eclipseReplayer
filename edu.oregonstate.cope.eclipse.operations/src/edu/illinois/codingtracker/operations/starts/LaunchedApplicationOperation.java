@@ -66,11 +66,7 @@ public class LaunchedApplicationOperation extends UserOperation {
 		launchName= operationLexer.readString();
 		application= operationLexer.readString();
 		product= operationLexer.readString();
-		if (!Configuration.isOldFormat) {
-			useProduct= operationLexer.readBoolean();
-		} else {
-			useProduct= Boolean.valueOf(operationLexer.readString());
-		}
+		useProduct= Boolean.valueOf(operationLexer.readString());
 	}
 	
 	@Override
@@ -82,6 +78,7 @@ public class LaunchedApplicationOperation extends UserOperation {
 	@Override
 	public void replay() throws Exception {
 		//do nothing
+		//
 	}
 
 	@Override

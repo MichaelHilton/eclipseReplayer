@@ -56,11 +56,11 @@ public abstract class BreakableResourceOperation extends ResourceOperation {
 			//Do not replay effects of replayed refactorings, since they are replayed as the whole.
 			return;
 		}
-		if (success) {
+		//if (success) {
 			replayBreakableResourceOperation();
-		} else {
-			Debugger.debugWarning("Ignored unsuccessful resource operation:\n" + this);
-		}
+//		} else {
+//			Debugger.debugWarning("Ignored unsuccessful resource operation:\n" + this);
+//		}
 	}
 
 	@Override

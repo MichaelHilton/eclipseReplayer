@@ -6,6 +6,7 @@ package edu.illinois.codingtracker.operations.resources;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.json.simple.JSONObject;
 
 import edu.illinois.codingtracker.helpers.ResourceHelper;
 import edu.illinois.codingtracker.operations.OperationLexer;
@@ -59,6 +60,13 @@ public class CreatedResourceOperation extends UpdatedResourceOperation {
 		super.initializeFrom(operationLexer);
 		isFile= operationLexer.readBoolean();
 		fileContent= operationLexer.readString();
+	}
+	
+	@Override
+	public void parse(JSONObject value) {
+		super.parse(value);
+		isFile= true;
+		fileContent= (String) value.get("text");
 	}
 
 	@Override
