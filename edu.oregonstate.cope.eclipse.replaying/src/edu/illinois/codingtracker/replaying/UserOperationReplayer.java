@@ -45,6 +45,7 @@ import edu.illinois.codingtracker.operations.resources.CreatedResourceOperation;
 import edu.illinois.codingtracker.operations.resources.ReorganizedResourceOperation;
 import edu.illinois.codingtracker.operations.resources.ResourceOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
+import edu.illinois.codingtracker.recording.ast.ASTInferencerFacade;
 
 /**
  * 
@@ -483,6 +484,9 @@ public class UserOperationReplayer {
 				showMessage("The current editor is wrong. Should be: \"" + currentEditor.getTitle() + "\"");
 				return;
 			}
+			
+			astInferencer.beforeDocumentChanged(currentUserOperation);
+			
 			if (isSplitReplay && currentUserOperation instanceof TextChangeOperation && !isCurrentOperationSplit) {
 				isCurrentOperationSplit= true;
 				((TextChangeOperation)currentUserOperation).splitReplay();
@@ -490,6 +494,10 @@ public class UserOperationReplayer {
 				isCurrentOperationSplit= false;
 				currentUserOperation.replay();
 			}
+			
+			astInferencer.handleResourceOperation(currentUserOperation);
+			astInferencer.flushCurrentTextChanges(currentUserOperation);
+			
 			currentEditor= EditorHelper.getActiveEditor();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
