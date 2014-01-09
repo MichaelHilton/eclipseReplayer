@@ -1,7 +1,9 @@
 package edu.illinois.codingtracker.recording.ast;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.DocumentEvent;
 
+import edu.illinois.codingtracker.helpers.ResourceHelper;
 import edu.illinois.codingtracker.operations.UserOperation;
 import edu.illinois.codingtracker.operations.ast.ASTOperation;
 import edu.illinois.codingtracker.operations.files.EditedFileOperation;
@@ -50,16 +52,24 @@ public class ASTInferencerFacade {
 
 	public void handleResourceOperation(UserOperation currentUserOperation) {
 		if (currentUserOperation instanceof CreatedResourceOperation) {
+			CreatedResourceOperation op= (CreatedResourceOperation)currentUserOperation;
+			IResource resource= ResourceHelper.findWorkspaceMember(op.getResourcePath());
 
+			//see BreakableResourceOperation.initializeFrom() for the hardcoded boolean
+			astRecorder.recordASTOperationForCreatedResource(resource, true);
 		}
 		else if (currentUserOperation instanceof DeletedResourceOperation) {
+			DeletedResourceOperation op= (DeletedResourceOperation)currentUserOperation;
+			IResource resource= ResourceHelper.findWorkspaceMember(op.getResourcePath());
 
+
+			astRecorder.recordASTOperationForDeletedResource(resource, true);
 		}
 		else if (currentUserOperation instanceof CopiedResourceOperation) {
-
+			System.err.println("handleResourceOperation did not handle copy");
 		}
 		else if (currentUserOperation instanceof MovedResourceOperation) {
-
+			System.err.println("handleResourceOperation did not handle move");
 		}
 	}
 }
