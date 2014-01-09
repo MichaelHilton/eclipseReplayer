@@ -495,8 +495,8 @@ public class UserOperationReplayer {
 				currentUserOperation.replay();
 			}
 			
-			astInferencer.handleResourceOperation(currentUserOperation);
 			astInferencer.flushCurrentTextChanges(currentUserOperation);
+			astInferencer.handleResourceOperation(currentUserOperation);
 			
 			currentEditor= EditorHelper.getActiveEditor();
 		} catch (Exception e) {
