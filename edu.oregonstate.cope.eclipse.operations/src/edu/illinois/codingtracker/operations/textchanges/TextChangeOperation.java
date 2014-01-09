@@ -204,54 +204,53 @@ public abstract class TextChangeOperation extends UserOperation {
 		 	//TODO Populate currentViewer
 		 	currentDocument= getDocumentForEditor();
 		 }
-		  
-		 private IDocument getDocumentForEditor() {
-		 	IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		 	IEditorReference[] editorReferences = activeWindow.getActivePage().getEditorReferences();
-		 	for (IEditorReference editorReference : editorReferences) {
-		 	 ITextFileBufferManager bufferManager = FileBuffers.getTextFileBufferManager();
-		 	 IDocument document = getDocumentForEditor(editorReference);
-		 	 if (document == null)
-		 	 continue;
-		 	  
-		 	 ITextFileBuffer textFileBuffer = bufferManager.getTextFileBuffer(document);
-		 	 String fileLocation = textFileBuffer.getLocation().toPortableString();
-		 	 if (fileLocation.equals(fileName)) {
-		 	 editorReference.getEditor(true).setFocus(); // might need to be done in UI thread
-		 	 return document;
-		 	 }
-		 	}
-		 	// open editor
-		 	return openEditor();
-		 }
-		  
-		 private IDocument openEditor() {
-		 	IWorkbenchPage page = UIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		 	IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fileName));
-		 	IEditorDescriptor desc = PlatformUI.getWorkbench().
-		 	 getEditorRegistry().getDefaultEditor(file.getName());
-		 	try {
-		 	 IEditorPart openedEditor = page.openEditor(new FileEditorInput(file), desc.getId());
-		 	 return getDocumentForEditor(openedEditor);
-		 	} catch (PartInitException e) {
-		 	}
-		 	return null;
-		 }
 
-		 private IDocument getDocumentForEditor(IEditorReference editorReference) {
-		 	IEditorPart editorPart = editorReference.getEditor(true);
-		 	return getDocumentForEditor(editorPart);
-		 }
+	private IDocument getDocumentForEditor() {
+		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IEditorReference[] editorReferences = activeWindow.getActivePage().getEditorReferences();
+		for (IEditorReference editorReference : editorReferences) {
+			ITextFileBufferManager bufferManager = FileBuffers.getTextFileBufferManager();
+			IDocument document = getDocumentForEditor(editorReference);
+			if (document == null)
+				continue;
 
-		 private IDocument getDocumentForEditor(IEditorPart editorPart) {
-		 	if (editorPart instanceof MultiPageEditorPart) {
-		 	 //((MultiPageEditorPart) editorPart).addPageChangedListener(new MultiEditorPageChangedListener());
-		 	 return null;
-		 	}
-		 	ISourceViewer sourceViewer = (ISourceViewer) editorPart.getAdapter(ITextOperationTarget.class);
-		 	IDocument document = sourceViewer.getDocument();
-		 	return document;
-		 }
+			ITextFileBuffer textFileBuffer = bufferManager.getTextFileBuffer(document);
+			String fileLocation = textFileBuffer.getLocation().toPortableString();
+			if (fileLocation.equals(fileName)) {
+				editorReference.getEditor(true).setFocus(); // might need to be done in UI thread
+				return document;
+			}
+		}
+		// open editor
+		return openEditor();
+	}
+
+	private IDocument openEditor() {
+		IWorkbenchPage page = UIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fileName));
+		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
+		try {
+			IEditorPart openedEditor = page.openEditor(new FileEditorInput(file), desc.getId());
+			return getDocumentForEditor(openedEditor);
+		} catch (PartInitException e) {
+		}
+		return null;
+	}
+
+	private IDocument getDocumentForEditor(IEditorReference editorReference) {
+		IEditorPart editorPart = editorReference.getEditor(true);
+		return getDocumentForEditor(editorPart);
+	}
+
+	private IDocument getDocumentForEditor(IEditorPart editorPart) {
+		if (editorPart instanceof MultiPageEditorPart) {
+			// ((MultiPageEditorPart) editorPart).addPageChangedListener(new MultiEditorPageChangedListener());
+			return null;
+		}
+		ISourceViewer sourceViewer = (ISourceViewer) editorPart.getAdapter(ITextOperationTarget.class);
+		IDocument document = sourceViewer.getDocument();
+		return document;
+	}
 
 	/**
 	 * Valid only during replay.
