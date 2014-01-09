@@ -9,54 +9,19 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import edu.illinois.codingtracker.operations.ast.ASTFileOperation;
-import edu.illinois.codingtracker.operations.ast.ASTOperation;
-import edu.illinois.codingtracker.operations.ast.InferredRefactoringOperation;
-import edu.illinois.codingtracker.operations.ast.InferredUnknownTransformationOperation;
-import edu.illinois.codingtracker.operations.conflicteditors.ClosedConflictEditorOperation;
-import edu.illinois.codingtracker.operations.conflicteditors.OpenedConflictEditorOperation;
-import edu.illinois.codingtracker.operations.conflicteditors.SavedConflictEditorOperation;
 import edu.illinois.codingtracker.operations.files.ClosedFileOperation;
 import edu.illinois.codingtracker.operations.files.EditedFileOperation;
-import edu.illinois.codingtracker.operations.files.EditedUnsychronizedFileOperation;
-import edu.illinois.codingtracker.operations.files.RefactoredSavedFileOperation;
 import edu.illinois.codingtracker.operations.files.SaveProjectSnapshot;
 import edu.illinois.codingtracker.operations.files.SavedFileOperation;
-import edu.illinois.codingtracker.operations.files.UpdatedFileOperation;
-import edu.illinois.codingtracker.operations.files.snapshoted.CVSCommittedFileOperation;
-import edu.illinois.codingtracker.operations.files.snapshoted.CVSInitiallyCommittedFileOperation;
 import edu.illinois.codingtracker.operations.files.snapshoted.NewFileOperation;
-import edu.illinois.codingtracker.operations.files.snapshoted.RefreshedFileOperation;
-import edu.illinois.codingtracker.operations.files.snapshoted.SVNCommittedFileOperation;
-import edu.illinois.codingtracker.operations.files.snapshoted.SVNInitiallyCommittedFileOperation;
-import edu.illinois.codingtracker.operations.files.snapshoted.SnapshotedFileOperation;
-import edu.illinois.codingtracker.operations.junit.TestCaseFinishedOperation;
-import edu.illinois.codingtracker.operations.junit.TestCaseStartedOperation;
-import edu.illinois.codingtracker.operations.junit.TestSessionFinishedOperation;
-import edu.illinois.codingtracker.operations.junit.TestSessionLaunchedOperation;
 import edu.illinois.codingtracker.operations.junit.TestSessionStartedOperation;
-import edu.illinois.codingtracker.operations.options.ProjectOptionsChangedOperation;
-import edu.illinois.codingtracker.operations.options.WorkspaceOptionsChangedOperation;
 import edu.illinois.codingtracker.operations.refactorings.FinishedRefactoringOperation;
-import edu.illinois.codingtracker.operations.refactorings.NewStartedRefactoringOperation;
-import edu.illinois.codingtracker.operations.refactorings.PerformedRefactoringOperation;
-import edu.illinois.codingtracker.operations.refactorings.RedoneRefactoringOperation;
-import edu.illinois.codingtracker.operations.refactorings.UndoneRefactoringOperation;
-import edu.illinois.codingtracker.operations.references.ReferencingProjectsChangedOperation;
-import edu.illinois.codingtracker.operations.resources.CopiedResourceOperation;
 import edu.illinois.codingtracker.operations.resources.CreatedResourceOperation;
 import edu.illinois.codingtracker.operations.resources.DeletedResourceOperation;
 import edu.illinois.codingtracker.operations.resources.ExternallyModifiedResourceOperation;
-import edu.illinois.codingtracker.operations.resources.MovedResourceOperation;
 import edu.illinois.codingtracker.operations.starts.LaunchedApplicationOperation;
-import edu.illinois.codingtracker.operations.starts.StartedEclipseOperation;
 import edu.illinois.codingtracker.operations.starts.StartedRefactoringOperation;
-import edu.illinois.codingtracker.operations.textchanges.PerformedConflictEditorTextChangeOperation;
 import edu.illinois.codingtracker.operations.textchanges.PerformedTextChangeOperation;
-import edu.illinois.codingtracker.operations.textchanges.RedoneConflictEditorTextChangeOperation;
-import edu.illinois.codingtracker.operations.textchanges.RedoneTextChangeOperation;
-import edu.illinois.codingtracker.operations.textchanges.UndoneConflictEditorTextChangeOperation;
-import edu.illinois.codingtracker.operations.textchanges.UndoneTextChangeOperation;
 
 //TODO: Decide on where this class should be and how it should be used
 /**
@@ -75,33 +40,30 @@ public class OperationDeserializer {
 	  JSONParser parser = new JSONParser();
       JSONObject value = null;
       String strValue = null;
-              for(String operation : operationsList) {
-                      try {
-                              if(operation.isEmpty()) {
-                                      continue;
-                              }
-                              value = (JSONObject) parser.parse(operation);
-                              String eventName = (String) value.get("eventType");
-                              System.out.println(eventName);
-                              addUserOperation(
-									userOperations, value, eventName);
-                      } catch (Exception e) {
-                              // TODO Auto-generated catch block
-                              e.printStackTrace();
-                      }
-              }
+      for(String operation : operationsList) {
+	      try {
+	          if(operation.isEmpty()) {
+	        	  continue;
+	          }
+	          value = (JSONObject) parser.parse(operation);
+	          String eventName = (String) value.get("eventType");
+	          System.out.println(eventName);
+	          addUserOperation(userOperations, value, eventName);
+	      } catch (Exception e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+	      }
+      }
       return userOperations;
 	}
 
 
 
-	private static void addUserOperation(
-			List<UserOperation> userOperations, JSONObject value,
-			String eventName) {
+	private static void addUserOperation(List<UserOperation> userOperations, JSONObject value, String eventName) {
 		UserOperation userOperation= createEmptyUserOperation(eventName);
 		if(userOperation != null){ 
-		userOperation.parse(value);
-		  userOperations.add(userOperation);
+			userOperation.parse(value);
+			userOperations.add(userOperation);
 		}
 		//return userOperation;
 	}
@@ -110,9 +72,7 @@ public class OperationDeserializer {
 
 	private static UserOperation createEmptyUserOperation(String operationSymbol) {
 		UserOperation userOperation = null;
-		if(operationSymbol.equals("FileInit")){
-			userOperation= new NewFileOperation();
-		}else if(operationSymbol.equals("textChange")){
+		if(operationSymbol.equals("textChange")){
 			userOperation= new PerformedTextChangeOperation();
 		}else if(operationSymbol.equals("fileOpen")){
 			userOperation= new EditedFileOperation();
@@ -138,6 +98,8 @@ public class OperationDeserializer {
 			userOperation= new DeletedResourceOperation();
 		}else if(operationSymbol.equals("resourceAdded")){
 			userOperation= new CreatedResourceOperation();
+		}else if(operationSymbol.equals("refresh")){
+			userOperation= new ExternallyModifiedResourceOperation();
 		}
 		//refactoringLaunch
 		
