@@ -110,9 +110,7 @@ public class OperationDeserializer {
 
 	private static UserOperation createEmptyUserOperation(String operationSymbol) {
 		UserOperation userOperation = null;
-		if(operationSymbol.equals("FileInit")){
-			userOperation= new NewFileOperation();
-		}else if(operationSymbol.equals("textChange")){
+		if(operationSymbol.equals("textChange")){
 			userOperation= new PerformedTextChangeOperation();
 		}else if(operationSymbol.equals("fileOpen")){
 			userOperation= new EditedFileOperation();
