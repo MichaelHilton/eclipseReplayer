@@ -203,6 +203,7 @@ public abstract class TextChangeOperation extends UserOperation {
 		 	//currentViewer = currentEditor.
 		 	//TODO Populate currentViewer
 		 	currentDocument= getDocumentForEditor();
+		 	editedFile = getIFile();
 		 }
 
 	private IDocument getDocumentForEditor() {
