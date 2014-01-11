@@ -227,7 +227,7 @@ public abstract class TextChangeOperation extends UserOperation {
 
 	private IDocument openEditor() {
 		IWorkbenchPage page = UIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fileName));
+		IFile file = getIFile();
 		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
 		try {
 			IEditorPart openedEditor = page.openEditor(new FileEditorInput(file), desc.getId());
@@ -235,6 +235,11 @@ public abstract class TextChangeOperation extends UserOperation {
 		} catch (PartInitException e) {
 		}
 		return null;
+	}
+
+	private IFile getIFile() {
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fileName));
+		return file;
 	}
 
 	private IDocument getDocumentForEditor(IEditorReference editorReference) {
