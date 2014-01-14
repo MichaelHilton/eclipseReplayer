@@ -3,42 +3,46 @@
  */
 package edu.illinois.codingtracker.operations.starts;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Map;
+
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.json.simple.JSONObject;
 
-import edu.illinois.codingtracker.helpers.Configuration;
 import edu.illinois.codingtracker.operations.OperationLexer;
 import edu.illinois.codingtracker.operations.OperationSymbols;
 import edu.illinois.codingtracker.operations.OperationTextChunk;
 import edu.illinois.codingtracker.operations.UserOperation;
+import edu.oregonstate.cope.clientRecorder.Events;
+import edu.oregonstate.cope.clientRecorder.JSONConstants;
 
 /**
  * 
- * @author Stas Negara
+ * @author Caius Brindescu
  * 
  */
 public class LaunchedApplicationOperation extends UserOperation {
-
+	
+	private Map launchAttributes;
+	private String launchConfig;
 	private String launchMode;
-
 	private String launchName;
-
-	private String application;
-
-	private String product;
-
-	private boolean useProduct;
-
-	public LaunchedApplicationOperation() {
-		super();
-	}
-
-	public LaunchedApplicationOperation(String launchMode, String launchName, String application, String product, boolean useProduct) {
-		super();
-		this.launchMode= launchMode;
-		this.launchName= launchName;
-		this.application= application;
-		this.product= product;
-		this.useProduct= useProduct;
+	private String launchFile;
+	
+	public LaunchedApplicationOperation(String mode) {
+		if (mode.equals(Events.debugLaunch.toString()))
+			launchMode = ILaunchManager.DEBUG_MODE;
+		if (mode.equals(Events.normalLaunch.toString()))
+			launchMode = ILaunchManager.RUN_MODE;
 	}
 
 	@Override
@@ -53,44 +57,42 @@ public class LaunchedApplicationOperation extends UserOperation {
 
 	@Override
 	protected void populateTextChunk(OperationTextChunk textChunk) {
-		textChunk.append(launchMode);
-		textChunk.append(launchName);
-		textChunk.append(application);
-		textChunk.append(product);
-		textChunk.append(useProduct);
 	}
 
 	@Override
 	protected void initializeFrom(OperationLexer operationLexer) {
-		launchMode= operationLexer.readString();
-		launchName= operationLexer.readString();
-		application= operationLexer.readString();
-		product= operationLexer.readString();
-		useProduct= Boolean.valueOf(operationLexer.readString());
 	}
 	
 	@Override
 	public void parse(JSONObject value) {
-		//application= (String) value.get("entityAddress");
-		//TODO MH
+		launchAttributes = (Map) value.get(JSONConstants.JSON_LAUNCH_ATTRIBUTES);
+		launchConfig = (String) value.get(JSONConstants.JSON_LAUNCH_CONFIGURATION);
+		launchName = (String) value.get(JSONConstants.JSON_LAUNCH_NAME);
+		launchFile = (String) value.get(JSONConstants.JSON_LAUNCH_FILE);
 	}
 
 	@Override
 	public void replay() throws Exception {
-		//do nothing
-		//
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		writeLaunchFile(launchName, launchFile);
+		ILaunchConfiguration launchConfiguration = launchManager.getLaunchConfiguration(launchConfig);
+		ILaunchConfigurationWorkingCopy launchConfigWorkingCopy = launchConfiguration.getWorkingCopy();
+		launchConfigWorkingCopy.setAttributes(launchAttributes);
+		ILaunchConfiguration newLaunchConfig = launchConfigWorkingCopy.doSave();
+		ILaunch launch = newLaunchConfig.launch(launchMode, new NullProgressMonitor(), true);
+	}
+
+	private void writeLaunchFile(String launchName, String launchFileContents) {
+		try {
+			Files.write(Paths.get(ResourcesPlugin.getWorkspace().getRoot().getLocation().makeAbsolute().toPortableString(), ".metadata/.plugins/org.eclipse.debug.core/.launches/" + launchName + ".launch"), launchFileContents.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (IOException e) {
+			System.out.println(e);
+		}
 	}
 
 	@Override
 	public String toString() {
-		StringBuffer sb= new StringBuffer();
-		sb.append("Launch mode: " + launchMode + "\n");
-		sb.append("Launch name: " + launchName + "\n");
-		sb.append("Application: " + application + "\n");
-		sb.append("Product: " + product + "\n");
-		sb.append("UseProduct: " + useProduct + "\n");
-		sb.append(super.toString());
-		return sb.toString();
+		return "";
 	}
 
 }

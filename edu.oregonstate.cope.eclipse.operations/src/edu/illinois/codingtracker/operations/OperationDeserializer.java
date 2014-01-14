@@ -83,11 +83,11 @@ public class OperationDeserializer {
 		}else if(operationSymbol.equals("testRun")){
 			userOperation= new TestSessionStartedOperation();
 		}else if(operationSymbol.equals("normalLaunch")){
-			userOperation= new LaunchedApplicationOperation();
+			userOperation= new LaunchedApplicationOperation(operationSymbol);
 		}else if(operationSymbol.equals("debugLaunch")){
-			userOperation= new LaunchedApplicationOperation();
+			userOperation= new LaunchedApplicationOperation(operationSymbol);
 		}else if(operationSymbol.equals("launchEnd")){
-			userOperation= new LaunchedApplicationOperation();
+			//userOperation= new LaunchedApplicationOperation();
 		}else if(operationSymbol.equals("fileSave")){
 			userOperation= new SavedFileOperation();
 		}else if(operationSymbol.equals("refactoringLaunch")){
