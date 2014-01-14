@@ -288,7 +288,10 @@ public class OperationRecorder {
 	}
 
 	public void recordLaunchedApplication(String launchMode, String launchName, String application, String product, boolean useProduct) {
-		TextRecorder.record(new LaunchedApplicationOperation(launchMode, launchName, application, product, useProduct));
+	/*
+	 * MC commented out because LaunchOApplicationOperation was rewritten	
+	 */
+	//	TextRecorder.record(new LaunchedApplicationOperation(launchMode, launchName, application, product, useProduct));
 	}
 
 	public void recordStartedRefactoring(RefactoringDescriptor refactoringDescriptor, int eventType) {
