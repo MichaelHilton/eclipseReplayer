@@ -45,7 +45,7 @@ import edu.illinois.codingtracker.operations.resources.CreatedResourceOperation;
 import edu.illinois.codingtracker.operations.resources.ReorganizedResourceOperation;
 import edu.illinois.codingtracker.operations.resources.ResourceOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
-import edu.illinois.codingtracker.recording.ast.ASTInferencerFacade;
+import edu.oregonstate.cope.eclipse.astinference.ast.ASTInferencerFacade;
 
 /**
  * 
