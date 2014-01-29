@@ -118,18 +118,22 @@ public abstract class ResourceOperation extends UserOperation {
 		}
 	}
 
-	protected ITextEditor saveResourceInEditor() throws PartInitException {
-		ITextEditor editor= EditorHelper.getExistingEditor(resourcePath);
-		if (editor != null) {
-			editor.doSave(null);
-			//FIXME: Instead of sleeping, should listen to IProgressMonitor.done()
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				//do nothing
+	protected Set<ITextEditor> saveResourceInEditor() throws PartInitException, JavaModelException {
+		Set<ITextEditor> editors= EditorHelper.getExistingEditors(resourcePath);
+		
+		for (ITextEditor editor : editors) {
+			if (editor != null) {
+				editor.doSave(null);
+				//FIXME: Instead of sleeping, should listen to IProgressMonitor.done()
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					//do nothing
+				}
 			}
 		}
-		return editor;
+		
+		return editors;
 	}
 
 	protected IPackageFragment findOrCreateCompilationUnitParent(String path) throws CoreException {
@@ -204,7 +208,10 @@ public abstract class ResourceOperation extends UserOperation {
 	}
 
 	private boolean isIgnored(IResource resource) {
-		return resource instanceof IFile && !ResourceHelper.isJavaFile((IFile)resource);
+		
+		// MC I do not understand why non java files should be ignored (e.g. this prevented the .classpath file being refreshed)
+		//return resource instanceof IFile && !ResourceHelper.isJavaFile((IFile)resource);
+		return false;
 	}
 
 	public static boolean isExternallyModifiedResource(String resourcePath) {

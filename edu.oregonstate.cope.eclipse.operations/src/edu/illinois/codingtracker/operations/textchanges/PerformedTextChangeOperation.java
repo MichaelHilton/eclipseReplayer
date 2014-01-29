@@ -7,6 +7,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 
 import edu.illinois.codingtracker.operations.OperationSymbols;
+import edu.oregonstate.cope.clientRecorder.ChangeOrigin;
 
 /**
  * 
@@ -34,7 +35,10 @@ public class PerformedTextChangeOperation extends TextChangeOperation {
 
 	@Override
 	public String getDescription() {
-		return "Performed text change";
+		if (changeOrigin.equals(ChangeOrigin.USER))
+			return "Performed text change";
+		else
+			return changeOrigin + " text change";
 	}
 
 	@Override

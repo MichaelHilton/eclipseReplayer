@@ -3,6 +3,8 @@
  */
 package edu.illinois.codingtracker.operations.files;
 
+import java.util.Set;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -45,8 +47,8 @@ public class SavedFileOperation extends BreakableResourceOperation {
 
 	@Override
 	public void replayBreakableResourceOperation() throws CoreException {
-		ITextEditor editor= saveResourceInEditor();
-		if (editor == null) {
+		Set<ITextEditor> editors= saveResourceInEditor();
+		if (editors.isEmpty()) {
 			Debugger.debugWarning("Ignored save of the non existent editor:\n" + this);
 		}
 	}

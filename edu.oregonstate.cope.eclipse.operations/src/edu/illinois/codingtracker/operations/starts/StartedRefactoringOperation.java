@@ -3,10 +3,13 @@
  */
 package edu.illinois.codingtracker.operations.starts;
 
+import org.json.simple.JSONObject;
+
 import edu.illinois.codingtracker.operations.OperationLexer;
 import edu.illinois.codingtracker.operations.OperationSymbols;
 import edu.illinois.codingtracker.operations.OperationTextChunk;
 import edu.illinois.codingtracker.operations.UserOperation;
+import edu.oregonstate.cope.clientRecorder.JSONConstants;
 
 /**
  * This operation is no longer recorded.
@@ -15,6 +18,8 @@ import edu.illinois.codingtracker.operations.UserOperation;
  * 
  */
 public class StartedRefactoringOperation extends UserOperation {
+
+	private String refactoring_ID;
 
 	public StartedRefactoringOperation() {
 		super();
@@ -42,7 +47,18 @@ public class StartedRefactoringOperation extends UserOperation {
 
 	@Override
 	public void replay() {
-		isReplayedRefactoring= true;
+		//isReplayedRefactoring= true;
 	}
-
+	
+	@Override
+	public void parse(JSONObject value) {
+		super.parse(value);
+		
+		refactoring_ID = (String) value.get(JSONConstants.JSON_REFACTORING_ID);
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + "\n" + "refactoringID: " + refactoring_ID;
+	}
 }

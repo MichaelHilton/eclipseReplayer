@@ -54,11 +54,6 @@ public class MovedResourceOperation extends ReorganizedResourceOperation {
 			if (!Configuration.isInTestMode) {
 				EditorHelper.closeAllEditorsForResource(resourcePath);
 
-				//TODO: The following check is a duplicate of a part of ClosedFileOperation#replay.
-				//If the currentEditor no longer exist, reset the corresponding field.
-				if (!EditorHelper.isExistingEditor(currentEditor)) {
-					currentEditor= null;
-				}
 			}
 			resource.move(new Path(destinationPath), updateFlags, null);
 		}

@@ -13,7 +13,6 @@ import edu.illinois.codingtracker.helpers.ViewerHelper;
 import edu.illinois.codingtracker.operations.ast.ASTFileOperation;
 import edu.illinois.codingtracker.operations.ast.ASTOperation;
 import edu.illinois.codingtracker.operations.ast.InferredRefactoringOperation;
-import edu.illinois.codingtracker.operations.files.RefactoredSavedFileOperation;
 import edu.illinois.codingtracker.operations.files.snapshoted.SnapshotedFileOperation;
 import edu.illinois.codingtracker.operations.refactorings.FinishedRefactoringOperation;
 import edu.illinois.codingtracker.operations.refactorings.NewStartedRefactoringOperation;
@@ -59,7 +58,7 @@ public class OperationSequenceFilter extends ViewerFilter {
 		if (element instanceof TextChangeOperation) {
 			return showTextChanges;
 		}
-		if (element instanceof RefactoringOperation || element instanceof RefactoredSavedFileOperation || element instanceof StartedRefactoringOperation
+		if (element instanceof RefactoringOperation || element instanceof StartedRefactoringOperation
 				|| element instanceof NewStartedRefactoringOperation || element instanceof FinishedRefactoringOperation) {
 			return showRefactorings;
 		}

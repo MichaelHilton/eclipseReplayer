@@ -69,13 +69,13 @@ public class ExternallyModifiedResourceOperation extends ResourceOperation {
 	@Override
 	public void replay() throws CoreException {
 		IResource resource= findResource();
-		EditorHelper.closeAllEditorsForResource(resourcePath);
+		//EditorHelper.closeAllEditorsForResource(resourcePath);
 		try {
 			Files.write(Paths.get(resource.getLocation().makeAbsolute().toPortableString()), text.getBytes(), StandardOpenOption.WRITE);
 		} catch (IOException e) {
 		}
 		resource.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
-		EditorHelper.openEditor(resourcePath);
+		//EditorHelper.openEditor(resourcePath);
 	}
 	
 	@Override

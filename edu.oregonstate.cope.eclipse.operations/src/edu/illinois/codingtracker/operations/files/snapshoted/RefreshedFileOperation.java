@@ -80,9 +80,9 @@ public class RefreshedFileOperation extends SnapshotedFileOperation {
 	}
 
 	private void performReplaying() throws CoreException {
-		ITextEditor fileEditor= EditorHelper.getExistingEditor(resourcePath);
+		ITextEditor fileEditor= EditorHelper.getAndOpenEditor(resourcePath);
 		if (fileEditor != null) { //File editor exists
-			IDocument editedDocument= EditorHelper.getEditedDocument(fileEditor);
+			IDocument editedDocument= EditorHelper.getDocumentForEditor(resourcePath);
 			if (isCausedByConflictEditorSave && !fileEditor.isDirty()) {
 				//Check the presence of the new text 
 				if (!fileContent.equals(editedDocument.get())) {
@@ -98,9 +98,6 @@ public class RefreshedFileOperation extends SnapshotedFileOperation {
 			createCompilationUnit(replacedText);
 			EditorHelper.createEditor(resourcePath);
 			//If there is a current editor, restore it.
-			if (currentEditor != null) {
-				EditorHelper.activateEditor(currentEditor);
-			}
 		}
 		refresh();
 	}

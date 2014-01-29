@@ -22,8 +22,6 @@ public abstract class UserOperation {
 	//Made public to be able to assign when the replayer is loaded/reset
 	public static boolean isReplayedRefactoring= false;
 
-	protected static IEditorPart currentEditor= null;
-
 	private long timestamp;
 
 
@@ -78,10 +76,6 @@ public abstract class UserOperation {
 
 	public boolean isTestReplayRecorded() {
 		return true;
-	}
-
-	public static IEditorPart getCurrentEditor() {
-		return currentEditor;
 	}
 
 	protected abstract char getOperationSymbol();

@@ -47,19 +47,19 @@ public abstract class ConflictEditorTextChangeOperation extends TextChangeOperat
 
 	@Override
 	public void replay() throws ExecutionException, BadLocationException {
-		IEditorPart oldEditor= currentEditor;
-		currentEditor= EditorHelper.getCompareEditor(editorID);
-		if (currentEditor == null) {
+		//IEditorPart oldEditor= currentEditor;
+		//currentEditor= EditorHelper.getCompareEditor(editorID);
+		//if (currentEditor == null) {
 			//Sometimes, CodingTracker records document changes of closed conflict editors. This should not happen unless Eclipse 
 			//does not handle correctly certain scenarios, but we do not know yet which kind of scenarios cause this problem. 
 			//So, for now just output a warning.
-			Debugger.debugWarning("Ignored text change in an inexisting conflict editor:\n" + this);
-		} else {
+		//	Debugger.debugWarning("Ignored text change in an inexisting conflict editor:\n" + this);
+		//} else {
 			isReplaying= true;
 			super.replay();
 			isReplaying= false;
-		}
-		currentEditor= oldEditor;
+		//}
+		//currentEditor= oldEditor;
 	}
 
 	@Override

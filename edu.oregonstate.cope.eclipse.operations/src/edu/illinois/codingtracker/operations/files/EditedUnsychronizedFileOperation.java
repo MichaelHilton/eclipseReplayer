@@ -57,10 +57,10 @@ public class EditedUnsychronizedFileOperation extends FileOperation {
 
 	@Override
 	public void replay() throws CoreException {
-		ITextEditor fileEditor= EditorHelper.getExistingEditor(resourcePath);
+		ITextEditor fileEditor= EditorHelper.getAndOpenEditor(resourcePath);
 		if (fileEditor != null) { //File editor exists
 			EditorHelper.activateEditor(fileEditor);
-			IDocument editedDocument= EditorHelper.getEditedDocument(fileEditor);
+			IDocument editedDocument= EditorHelper.getDocumentForEditor(resourcePath);
 			if (!editorContent.equals(editedDocument.get())) {
 				throw new RuntimeException("The text of the unsychronized editor is wrong: " + this);
 			}
@@ -69,10 +69,9 @@ public class EditedUnsychronizedFileOperation extends FileOperation {
 			if (editedFile == null || !editedFile.exists()) {
 				createCompilationUnit(editorContent);
 			}
-			fileEditor= EditorHelper.openEditor(resourcePath);
-			EditorHelper.getEditedDocument(fileEditor).set(editorContent);
+			fileEditor= EditorHelper.getAndOpenEditor(resourcePath);
+			EditorHelper.getDocumentForEditor(resourcePath).set(editorContent);
 		}
-		currentEditor= fileEditor;
 	}
 
 	@Override
