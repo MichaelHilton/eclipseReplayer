@@ -20,12 +20,12 @@ public class PerformedTextChangeOperation extends TextChangeOperation {
 		super();
 	}
 
-	public PerformedTextChangeOperation(DocumentEvent documentEvent, String replacedText) {
-		super(documentEvent, replacedText);
+	public PerformedTextChangeOperation(DocumentEvent documentEvent, String replacedText, String changeOrigin) {
+		super(documentEvent, replacedText, changeOrigin);
 	}
 
-	public PerformedTextChangeOperation(DocumentEvent documentEvent, String replacedText, long timestamp) {
-		super(documentEvent, replacedText, timestamp);
+	public PerformedTextChangeOperation(DocumentEvent documentEvent, String replacedText, long timestamp, String changeOrigin) {
+		super(documentEvent, replacedText, timestamp, changeOrigin);
 	}
 
 	@Override

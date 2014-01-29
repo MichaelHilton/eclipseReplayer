@@ -24,8 +24,8 @@ public class UndoneTextChangeOperation extends TextChangeOperation {
 		super();
 	}
 
-	public UndoneTextChangeOperation(DocumentEvent documentEvent, String replacedText) {
-		super(documentEvent, replacedText);
+	public UndoneTextChangeOperation(DocumentEvent documentEvent, String replacedText, String changeOrigin) {
+		super(documentEvent, replacedText, changeOrigin);
 	}
 
 	@Override

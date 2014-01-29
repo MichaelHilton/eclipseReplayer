@@ -33,6 +33,8 @@ import edu.illinois.codingtracker.operations.textchanges.PerformedTextChangeOper
 @SuppressWarnings("restriction")
 public class SnapshotDifferenceCalculator {
 
+	private static final String SNAPSHOT_CHANGEORIGIN = "snapshotDifference";
+
 	private static final CompareConfiguration compareConfiguration= new CompareConfiguration();
 
 	private static IDocument leftDocument;
@@ -85,7 +87,7 @@ public class SnapshotDifferenceCalculator {
 				String newText= rightDocument.get(rightPosition.getOffset(), rightPosition.getLength());
 				leftDocument.replace(leftDocumentOffset, leftPosition.getLength(), newText);
 				DocumentEvent documentEvent= new DocumentEvent(leftDocument, leftDocumentOffset, leftPosition.getLength(), newText);
-				snapshotDifference.add(new PerformedTextChangeOperation(documentEvent, replacedText, timestamp));
+				snapshotDifference.add(new PerformedTextChangeOperation(documentEvent, replacedText, timestamp, SNAPSHOT_CHANGEORIGIN));
 			} catch (BadLocationException e) {
 				throw new RuntimeException(e);
 			}

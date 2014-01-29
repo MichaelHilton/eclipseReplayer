@@ -75,13 +75,14 @@ public abstract class TextChangeOperation extends UserOperation {
 		super();
 	}
 
-	public TextChangeOperation(DocumentEvent documentEvent, String replacedText) {
-		this(documentEvent, replacedText, System.currentTimeMillis());
+	public TextChangeOperation(DocumentEvent documentEvent, String replacedText, String changeOrigin) {
+		this(documentEvent, replacedText, System.currentTimeMillis(), changeOrigin);
 	}
 
-	public TextChangeOperation(DocumentEvent documentEvent, String replacedText, long timestamp) {
+	public TextChangeOperation(DocumentEvent documentEvent, String replacedText, long timestamp, String changeOrigin) {
 		super(timestamp);
 		this.replacedText= replacedText;
+		this.changeOrigin = changeOrigin;
 		newText= documentEvent.getText();
 		offset= documentEvent.getOffset();
 		length= documentEvent.getLength();

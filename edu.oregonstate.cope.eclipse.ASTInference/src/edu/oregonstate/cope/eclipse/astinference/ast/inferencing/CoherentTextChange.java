@@ -19,6 +19,8 @@ import edu.illinois.codingtracker.operations.textchanges.UndoneTextChangeOperati
  */
 public class CoherentTextChange implements Cloneable {
 
+	private static final String GLUED_CHANGEORIGIN = "Glued";
+
 	private final long timestamp;
 
 	//This field is not final only to allow setting it in the method 'clone'.
@@ -71,7 +73,7 @@ public class CoherentTextChange implements Cloneable {
 			isDeletingOnly= true;
 		}
 		String replacedText= initialDocumentText.substring(baseOffset, baseOffset + initialRemovedTextLength);
-		initialTextChangeOperation= new PerformedTextChangeOperation(documentEvent, replacedText, timestamp);
+		initialTextChangeOperation= new PerformedTextChangeOperation(documentEvent, replacedText, timestamp, GLUED_CHANGEORIGIN);
 		applyTextChange(documentEvent);
 	}
 
@@ -281,7 +283,7 @@ public class CoherentTextChange implements Cloneable {
 	public PerformedTextChangeOperation createTextChangeOperation() {
 		Document editedDocument= new Document(getInitialDocumentText());
 		DocumentEvent documentEvent= new DocumentEvent(editedDocument, getOffset(), getRemovedTextLength(), getAddedText());
-		return new PerformedTextChangeOperation(documentEvent, getRemovedText(), getTimestamp());
+		return new PerformedTextChangeOperation(documentEvent, getRemovedText(), getTimestamp(), GLUED_CHANGEORIGIN);
 	}
 
 	@Override

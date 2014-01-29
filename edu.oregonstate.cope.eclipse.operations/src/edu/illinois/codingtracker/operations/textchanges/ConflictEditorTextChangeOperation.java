@@ -28,8 +28,8 @@ public abstract class ConflictEditorTextChangeOperation extends TextChangeOperat
 		super();
 	}
 
-	public ConflictEditorTextChangeOperation(String editorID, DocumentEvent documentEvent, String replacedText) {
-		super(documentEvent, replacedText);
+	public ConflictEditorTextChangeOperation(String editorID, DocumentEvent documentEvent, String replacedText, String changeOrigin) {
+		super(documentEvent, replacedText, changeOrigin);
 		this.editorID= editorID;
 	}
 

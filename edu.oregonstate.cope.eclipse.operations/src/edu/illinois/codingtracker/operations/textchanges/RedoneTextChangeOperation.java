@@ -19,8 +19,8 @@ public class RedoneTextChangeOperation extends TextChangeOperation {
 		super();
 	}
 
-	public RedoneTextChangeOperation(DocumentEvent documentEvent, String replacedText) {
-		super(documentEvent, replacedText);
+	public RedoneTextChangeOperation(DocumentEvent documentEvent, String replacedText, String changeOrigin) {
+		super(documentEvent, replacedText, changeOrigin);
 	}
 
 	@Override
