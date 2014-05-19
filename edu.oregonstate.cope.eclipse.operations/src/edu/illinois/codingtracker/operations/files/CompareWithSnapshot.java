@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.ZipLeveledStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 
@@ -124,12 +125,49 @@ public class CompareWithSnapshot extends FileOperation {
 		
 		try {
 			ZipFile snapshotZip = new ZipFile(snapshotPath);
-			String extractedDir = snapshotDir + File.separator + "extracted";
+			String destDir = snapshotDir + File.separator + "extracted";
+			String extractedDir = destDir;
 			
-			unzip(snapshotPath, snapshotDir + File.separator + "extracted");
 			
-			importProject(new File(snapshotDir + File.separator + "extracted" + File.separator + "p10"), "p10");
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			String projectName = "p10";
+			IProjectDescription newProjectDescription = workspace.newProjectDescription(projectName);
+			IProject newProject = workspace.getRoot().getProject(projectName);
+			newProject.create(newProjectDescription, null);
+			newProject.open(null);
+
+			unzip(snapshotPath, destDir);
 			
+			IOverwriteQuery overwriteQuery = new IOverwriteQuery(){
+				public String queryOverwrite(String file){return ALL;}
+			};
+			ImportOperation importOperation = new ImportOperation(newProject.getFullPath(),new File(destDir),FileSystemStructureProvider.INSTANCE,overwriteQuery);
+			importOperation.setCreateContainerStructure(false);
+			importOperation.run(new NullProgressMonitor());
+			
+			
+			
+//			//ZipFile zipFile = new ZipFile(workspace.getRoot().getLocation() + "/" + projectName + ".zip");
+//			IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
+//			    public String queryOverwrite(String file) { return ALL; }
+//			};
+//			ZipLeveledStructureProvider provider = new ZipLeveledStructureProvider(snapshotZip);
+//			List<Object> fileSystemObjects = new ArrayList<Object>();
+//			Enumeration<? extends ZipEntry> entries = snapshotZip.entries();
+//			while (entries.hasMoreElements()) {
+//			    fileSystemObjects.add((Object)entries.nextElement());
+//			}
+//			ImportOperation importOperation = new ImportOperation(newProject.getFullPath(), new ZipEntry(projectName), provider, overwriteQuery, fileSystemObjects);
+//			importOperation.setCreateContainerStructure(false);
+//			importOperation.run(new NullProgressMonitor());
+//			
+//			
+			
+			
+//			unzip(snapshotPath, snapshotDir + File.separator + "extracted");
+//			
+//			importProject(new File(snapshotDir + File.separator + "extracted" + File.separator + "p10"), "p10");
+//			
 //			
 //			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 //			Path currPath = (Path) workspace.getRoot().getLocation();
