@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import difflib.*;
 import edu.illinois.codingtracker.helpers.ResourceHelper;
@@ -12,9 +13,13 @@ import edu.illinois.codingtracker.helpers.ResourceHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -23,6 +28,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.internal.wizards.datatransfer.ZipLeveledStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 
 public class CompareWithSnapshot extends FileOperation {
@@ -118,32 +126,139 @@ public class CompareWithSnapshot extends FileOperation {
 			ZipFile snapshotZip = new ZipFile(snapshotPath);
 			String extractedDir = snapshotDir + File.separator + "extracted";
 			
-			// unzipping ... 
-			Enumeration<? extends ZipEntry> entries = snapshotZip.entries();
-			while (entries.hasMoreElements()) {
-			    ZipEntry entry = entries.nextElement();
-				File entryDestination = new File(extractedDir + File.separator + entry.getName());
-			    //System.out.println("Unzipping to " + entryDestination.getAbsolutePath());
-			    entryDestination.getParentFile().mkdirs();
-			    InputStream in = snapshotZip.getInputStream(entry);
-			    OutputStream out = new FileOutputStream(entryDestination);
-			    IOUtils.copy(in, out);
-			    IOUtils.closeQuietly(in);
-			    IOUtils.closeQuietly(out);
-			}
-			String projectName = snapshotZipFileName.split("-")[0];
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			unzip(snapshotPath, snapshotDir + File.separator + "extracted");
 			
-			File projectDir = project.getLocation().toFile();
+			importProject(new File(snapshotDir + File.separator + "extracted" + File.separator + "p10"), "p10");
 			
-			extractedDir += File.separator + projectDir.getName();  
+//			
+//			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//			Path currPath = (Path) workspace.getRoot().getLocation();
+//			
+			//ImportOperation importOperation = new ImportOperation(currPath,);
+
 			
-			// comparing two times due to limitations of comparator implementation 
-			System.out.println("Comparing " + projectDir.getAbsolutePath() + " and " + extractedDir);
-			new Comparator(projectDir.getAbsolutePath(), extractedDir);
-			System.out.println("Comparing " + extractedDir + " and " + projectDir.getAbsolutePath());
-			new Comparator(extractedDir, projectDir.getAbsolutePath());
-			deleteFolder(new File(extractedDir).getParentFile());
+			
+			//ImportOperation importOperation = new ImportOperation(newProject.getFullPath(), new ZipEntry(projectName), provider, overwriteQuery, fileSystemObjects);
+//			importOperation.setCreateContainerStructure(false);
+//			IProgressMonitor monitor = new NullProgressMonitor();
+//			//importOperation.run(new NullProgressMonitor());
+//			importOperation.run(monitor);
+
+			
+			
+//			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//			String projectName = "p10";
+//			IProjectDescription newProjectDescription = workspace.newProjectDescription(projectName);
+//			//IProject newProject = workspace.getRoot().getProject(projectName);
+//			IProject newProject = workspace.getRoot().getProject(projectName);
+//			newProject.create(newProjectDescription, null);
+//			newProject.open(null);
+//			//
+//			ZipFile zipFile = new ZipFile(snapshotPath);
+//			IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
+//			    public String queryOverwrite(String file) { return ALL; }
+//			};
+//			ZipLeveledStructureProvider provider = new ZipLeveledStructureProvider(zipFile);
+//			List<Object> fileSystemObjects = new ArrayList<Object>();
+//			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+//			while (entries.hasMoreElements()) {
+//			    fileSystemObjects.add((Object)entries.nextElement());
+//			}
+//			ImportOperation importOperation = new ImportOperation(newProject.getFullPath(), new ZipEntry(projectName), provider, overwriteQuery, fileSystemObjects);
+//			importOperation.setCreateContainerStructure(false);
+//			IProgressMonitor monitor = new NullProgressMonitor();
+//			//importOperation.run(new NullProgressMonitor());
+//			importOperation.run(monitor);
+			
+			
+			
+			
+			
+			
+			
+//			 String zipFile = snapshotPath;
+//		     String outputFolder = snapshotDir + File.separator + "extracted";
+//		 
+//		        System.out.println("Begin unzip "+ zipFile + " into "+outputFolder);
+//		        ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
+//		        ZipEntry ze = zis.getNextEntry();
+//		        while(ze!=null){
+//		            String entryName = ze.getName();
+//		            System.out.print("Extracting " + entryName + " -> " + outputFolder + File.separator +  entryName + "...");
+//		            File f = new File(outputFolder + File.separator +  entryName);
+//		            //create all folder needed to store in correct relative path.
+//		            f.getParentFile().mkdirs();
+//		            FileOutputStream fos = new FileOutputStream(f);
+//		            int len;
+//		            byte buffer[] = new byte[1024];
+//		            while ((len = zis.read(buffer)) > 0) {
+//		                fos.write(buffer, 0, len);
+//		            }
+//		            fos.close();   
+//		            System.out.println("OK!");
+//		            ze = zis.getNextEntry();
+//		        }
+//		        zis.closeEntry();
+//		        zis.close();
+//		 
+//		        System.out.println( zipFile + " unzipped successfully");
+//
+//			
+//			
+//			ZipInputStream zis = new ZipInputStream(new FileInputStream(snapshotPath));
+//	        ZipEntry ze = zis.getNextEntry();
+//	        while(ze!=null){
+//	            String entryName = ze.getName();
+//	            System.out.println("Extracting " + entryName + " -> " + extractedDir + File.separator +  entryName + "...");
+//	            File f = new File(snapshotPath + File.separator +  entryName);
+//	            //create all folder needed to store in correct relative path.
+//	            if(f.isDirectory() && !f.exists()){
+//	            	f.mkdirs();
+//	            }else{
+//	              f.getParentFile().mkdirs();
+//	              FileOutputStream fos = new FileOutputStream(f);
+//	              int len;
+//	              byte buffer[] = new byte[1024];
+//	              while ((len = zis.read(buffer)) > 0) {
+//	                fos.write(buffer, 0, len);
+//	              }
+//	              fos.close();   
+//	            }
+//	            System.out.println("OK!");
+//	            ze = zis.getNextEntry();
+//	        }
+//	        zis.closeEntry();
+//	        zis.close();
+//			
+			
+//			// unzipping ... 
+//			Enumeration<? extends ZipEntry> entries = snapshotZip.entries();
+//			while (entries.hasMoreElements()) {
+//			    ZipEntry entry = entries.nextElement();
+//				File entryDestination = new File(extractedDir + File.separator + entry.getName());
+//			    //System.out.println("Unzipping to " + entryDestination.getAbsolutePath());
+//			    entryDestination.getParentFile().mkdirs();
+//			    InputStream in = snapshotZip.getInputStream(entry);
+//			    OutputStream out = new FileOutputStream(entryDestination);
+//			    IOUtils.copy(in, out);
+//			    IOUtils.closeQuietly(in);
+//			    IOUtils.closeQuietly(out);
+//			}
+//			String projectName = snapshotZipFileName.split("-")[0];
+//			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			
+			//IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			
+//			File projectDir = project.getLocation().toFile();
+//			
+//			extractedDir += File.separator + projectDir.getName();  
+//			
+//			// comparing two times due to limitations of comparator implementation 
+//			System.out.println("Comparing " + projectDir.getAbsolutePath() + " and " + extractedDir);
+//			new Comparator(projectDir.getAbsolutePath(), extractedDir);
+//			System.out.println("Comparing " + extractedDir + " and " + projectDir.getAbsolutePath());
+//			new Comparator(extractedDir, projectDir.getAbsolutePath());
+//			deleteFolder(new File(extractedDir).getParentFile());
 
 		} catch (FileNotFoundException e) {
 			System.out.println("Cannot find snapshot file: " + e.getMessage());
@@ -163,4 +278,55 @@ public class CompareWithSnapshot extends FileOperation {
 	    }
 	    folder.delete();
 	}
+	
+	private static void unzip(String zipFilePath, String destDir) {
+        File dir = new File(destDir);
+        // create output directory if it doesn't exist
+        if(!dir.exists()) dir.mkdirs();
+        FileInputStream fis;
+        //buffer for read and write data to file
+        byte[] buffer = new byte[1024];
+        try {
+            fis = new FileInputStream(zipFilePath);
+            ZipInputStream zis = new ZipInputStream(fis);
+            ZipEntry ze = zis.getNextEntry();
+            while(ze != null){
+                String fileName = ze.getName();
+                File newFile = new File(destDir + File.separator + fileName);
+                System.out.println("Unzipping to "+newFile.getAbsolutePath());
+                System.out.println("is Dir? "+ze.isDirectory());
+                if(ze.isDirectory()){
+                	newFile.mkdirs();
+                }else{
+                //create directories for sub directories in zip
+                new File(newFile.getParent()).mkdirs();
+                FileOutputStream fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+                }
+                fos.close();
+                }
+                //close this ZipEntry
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+            //close last ZipEntry
+            zis.closeEntry();
+            zis.close();
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }    
+    }
+	
+	
+	 private static void importProject(final File baseDirectory, final String projectName) throws CoreException {
+			IProjectDescription description = ResourcesPlugin.getWorkspace().loadProjectDescription(
+					new Path(baseDirectory.getAbsolutePath() + "/.project"));
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			project.create(description, null);
+			project.open(null);
+		}
 }
+
