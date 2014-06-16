@@ -81,11 +81,12 @@ public class CreatedResourceOperation extends UpdatedResourceOperation {
 	@Override
 	public String toString() {
 		StringBuffer sb= new StringBuffer();
+		sb.append(super.toString());
+		
 		sb.append("Is file: " + isFile + "\n");
 		if (isFile) {
 			sb.append("File content: " + fileContent + "\n");
 		}
-		sb.append(super.toString());
 		return sb.toString();
 	}
 

@@ -3,8 +3,10 @@
  */
 package edu.illinois.codingtracker.operations.starts;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
@@ -84,7 +86,16 @@ public class LaunchedApplicationOperation extends UserOperation {
 
 	private void writeLaunchFile(String launchName, String launchFileContents) {
 		try {
-			Files.write(Paths.get(ResourcesPlugin.getWorkspace().getRoot().getLocation().makeAbsolute().toPortableString(), ".metadata/.plugins/org.eclipse.debug.core/.launches/" + launchName + ".launch"), launchFileContents.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			Path launchedFolderPath = Paths.get(ResourcesPlugin.getWorkspace().getRoot().getLocation().makeAbsolute().toPortableString(), 
+					".metadata/.plugins/org.eclipse.debug.core/.launches/");
+			Path filePath = launchedFolderPath.resolve(launchName + ".launch");
+			boolean success = new File(launchedFolderPath.toString()).mkdir();
+			if (!success)
+				System.out.println("Couldn't create .launches folder.");
+			filePath.toFile().createNewFile();
+			Files.write(filePath, 
+					launchFileContents.getBytes(), 
+					StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 		} catch (IOException e) {
 			System.out.println(e);
 		}

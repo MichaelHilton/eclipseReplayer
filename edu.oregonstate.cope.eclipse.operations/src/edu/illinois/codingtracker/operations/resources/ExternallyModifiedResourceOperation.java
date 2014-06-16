@@ -68,6 +68,10 @@ public class ExternallyModifiedResourceOperation extends ResourceOperation {
 
 	@Override
 	public void replay() throws CoreException {
+		
+		if (hasConflictMarkings(text))
+			return;
+		
 		IResource resource= findResource();
 		//EditorHelper.closeAllEditorsForResource(resourcePath);
 		try {
@@ -78,6 +82,13 @@ public class ExternallyModifiedResourceOperation extends ResourceOperation {
 		//EditorHelper.openEditor(resourcePath);
 	}
 	
+	private boolean hasConflictMarkings(String text) {
+		if (text.contains(">>>") && text.contains("===") && text.contains("<<<"))
+			return true;
+		else
+			return false;
+	}
+
 	@Override
 	public void parse(JSONObject value) {
 		resourcePath = (String) value.get(JSONConstants.JSON_ENTITY_ADDRESS);

@@ -142,6 +142,10 @@ public abstract class TextChangeOperation extends UserOperation {
 
 	@Override
 	public void replay() throws BadLocationException, ExecutionException {
+		
+		if (changeIsInAuxiliaryConflictFile(fileName))
+			return;
+		
 		lastReplayedTimestamp= getTime();
 		if (isReplayedRefactoring) {
 			isRecordedWhileRefactoring= true;
@@ -151,6 +155,10 @@ public abstract class TextChangeOperation extends UserOperation {
 			replayTextChange();
 			//postReplay();
 		}
+	}
+
+	private boolean changeIsInAuxiliaryConflictFile(String fileName) {
+		return fileName.contains(".java") && !fileName.endsWith(".java");
 	}
 
 	/**
@@ -318,10 +326,12 @@ public abstract class TextChangeOperation extends UserOperation {
 	@Override
 	public String toString() {
 		StringBuffer sb= new StringBuffer();
+		sb.append("File name: " + fileName + "\n");
 		sb.append("Replaced text: " + replacedText + "\n");
 		sb.append("New text: " + newText + "\n");
 		sb.append("Offset: " + offset + "\n");
 		sb.append("Length: " + length + "\n");
+		sb.append("Origin: " + changeOrigin + "\n");
 		sb.append(super.toString());
 		return sb.toString();
 	}

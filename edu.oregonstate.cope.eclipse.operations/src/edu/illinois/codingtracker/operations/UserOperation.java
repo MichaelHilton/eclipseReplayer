@@ -23,8 +23,9 @@ public abstract class UserOperation {
 	public static boolean isReplayedRefactoring= false;
 
 	private long timestamp;
-
-
+	
+	private String eventFilePath;
+	
 	public UserOperation() {
 		timestamp= System.currentTimeMillis();
 	}
@@ -88,9 +89,16 @@ public abstract class UserOperation {
 
 	public abstract void replay() throws Exception;
 	
-	public void parse(JSONObject value)
-	{
+	public void parse(JSONObject value) {
 		timestamp= System.currentTimeMillis();
+	}
+	
+	public void setEventFilePath(String eventFilePath) {
+		this.eventFilePath = eventFilePath;
+	}
+
+	protected String getEventFilePath() {
+		return this.eventFilePath;
 	}
 
 }

@@ -17,9 +17,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -74,8 +77,16 @@ public class EditorHelper {
 
 	public static ITextEditor createEditor(String filePath) throws JavaModelException, PartInitException {
 		IFile file = (IFile) ResourceHelper.findWorkspaceMember(filePath);
-		ITextEditor newTextEditor = (ITextEditor) JavaUI.openInEditor(JavaCore.createCompilationUnitFrom(file), false, false);
-
+		ITextEditor newTextEditor = null;
+		
+		if (filePath.endsWith(".java")) {
+			newTextEditor = (ITextEditor) JavaUI.openInEditor(JavaCore.createCompilationUnitFrom(file), false, false);
+		}
+		else{
+			IWorkbenchPage activePage = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage();
+			IDE.openEditor(activePage, file);
+		}
+		
 		return newTextEditor;
 	}
 

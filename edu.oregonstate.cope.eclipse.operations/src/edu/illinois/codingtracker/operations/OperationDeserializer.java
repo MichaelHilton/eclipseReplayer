@@ -3,6 +3,7 @@
  */
 package edu.illinois.codingtracker.operations;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import edu.illinois.codingtracker.operations.files.ClosedFileOperation;
+import edu.illinois.codingtracker.operations.files.CompareWithSnapshot;
 import edu.illinois.codingtracker.operations.files.EditedFileOperation;
 import edu.illinois.codingtracker.operations.files.SaveProjectSnapshot;
 import edu.illinois.codingtracker.operations.files.SavedFileOperation;
@@ -31,41 +33,105 @@ import edu.illinois.codingtracker.operations.textchanges.PerformedTextChangeOper
  */
 public class OperationDeserializer {
 
+	private String eventFilePath = "";
+	
+	public String getEventFilePath() {
+		return eventFilePath;
+	}
 
+	public void setEventFilePath(String eventFilePath) {
+		this.eventFilePath = eventFilePath;
+	}
+	
+	public OperationDeserializer(String eventFilePath) {
+		this.eventFilePath = eventFilePath;
+	}
+	
 	private static final String OPERATIONS_SEPARATOR = "\n\\$@\\$";
 	 
-	public static List<UserOperation> getUserOperations(String operationsRecord) {
+	public List<UserOperation> getUserOperations(String operationsRecord) {
 	  List<UserOperation> userOperations= new LinkedList<UserOperation>();
+	  ArrayList<JSONObject> JSONObjs = new ArrayList<JSONObject>();
 	  String[] operationsList = operationsRecord.split(OPERATIONS_SEPARATOR);
 	  JSONParser parser = new JSONParser();
       JSONObject value = null;
       String strValue = null;
+      
       for(String operation : operationsList) {
 	      try {
 	          if(operation.isEmpty()) {
 	        	  continue;
 	          }
 	          value = (JSONObject) parser.parse(operation);
-	          String eventName = (String) value.get("eventType");
-	          System.out.println(eventName);
-	          addUserOperation(userOperations, value, eventName);
+	          JSONObjs.add(value);
 	      } catch (Exception e) {
               // TODO Auto-generated catch block
               e.printStackTrace();
 	      }
       }
+     
+      preprocessJSONArray(JSONObjs);
+      
+      for(JSONObject jsonObj : JSONObjs){
+    	  String eventName = (String) jsonObj.get("eventType");
+          System.out.println(eventName);
+          addUserOperation(userOperations, jsonObj, eventName);
+      }
       return userOperations;
 	}
 
+	
+	private void swapClasspathWithProject(ArrayList<JSONObject> jsonObjs){
+		for(int j = 0; j < jsonObjs.size(); j++) {
+			JSONObject jsonObj = jsonObjs.get(j);
+			//CHECK IF CLASSPATH IS BEFORE PROJECT
+			if(jsonObj.get("eventType").toString().equals("resourceAdded")){
+				if(jsonObj.get("entityAddress").toString().contains(".classpath")){
+					//check if next entry is .project
+					int currLoc = jsonObjs.indexOf(jsonObj);
+					JSONObject nextObj = jsonObjs.get(currLoc+1);
+					if(nextObj.get("eventType").toString().equals("resourceAdded") && 
+							nextObj.get("entityAddress").toString().contains(".project")){
+						jsonObjs.set(currLoc, nextObj);
+ 						jsonObjs.set(currLoc+1, jsonObj);
+					}
+				}
+			}
+		}
+	}
+	
+	private void removeSpuriousEventsBeforeRecourceCreated(ArrayList<JSONObject> jsonObjs){
+		for(int j = 0; j < jsonObjs.size(); j++) {
+			JSONObject jsonObj = jsonObjs.get(j);
+			//CHECK FOR FILE EVENTS BEFORE RESOURCECREATED
+			if(jsonObj.get("eventType").toString().equals("resourceAdded")){
+				String currResource = jsonObj.get("entityAddress").toString();
+				int currLoc = jsonObjs.indexOf(jsonObj);
+				
+				for(int i = currLoc-1; i >= 0; i--){
+					if(jsonObjs.get(i).containsKey("entityAddress")){
+						if(jsonObjs.get(i).get("entityAddress").equals(currResource)){
+							jsonObjs.remove(i);
+							j--;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void preprocessJSONArray(ArrayList<JSONObject> jsonObjs) {
+		swapClasspathWithProject(jsonObjs);
+		removeSpuriousEventsBeforeRecourceCreated(jsonObjs);
+	}
 
-
-	private static void addUserOperation(List<UserOperation> userOperations, JSONObject value, String eventName) {
+	private void addUserOperation(List<UserOperation> userOperations, JSONObject value, String eventName) {
 		UserOperation userOperation= createEmptyUserOperation(eventName);
 		if(userOperation != null){ 
 			userOperation.parse(value);
+			userOperation.setEventFilePath(this.getEventFilePath());
 			userOperations.add(userOperation);
 		}
-		//return userOperation;
 	}
 	
 	
@@ -78,6 +144,7 @@ public class OperationDeserializer {
 			userOperation= new EditedFileOperation();
 		}else if(operationSymbol.equals("snapshot")){
 			userOperation= new SaveProjectSnapshot();
+			userOperation= new CompareWithSnapshot();
 		}else if(operationSymbol.equals("fileClose")){
 			userOperation= new ClosedFileOperation();
 		}else if(operationSymbol.equals("testRun")){
