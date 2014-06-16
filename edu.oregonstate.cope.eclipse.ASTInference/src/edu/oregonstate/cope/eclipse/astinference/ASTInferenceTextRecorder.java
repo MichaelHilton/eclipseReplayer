@@ -70,9 +70,4 @@ public class ASTInferenceTextRecorder {
 			return System.currentTimeMillis();
 		}
 	}
-
-	public static String getMainRecordFilePath() {
-		return safeRecorder.mainRecordFilePath;
-	}
-
 }
