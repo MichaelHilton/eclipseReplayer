@@ -34,9 +34,8 @@ public class ASTInferenceTextRecorder {
 	 * updates the timestamp.
 	 * 
 	 * @param userOperation
-	 * @param isSimulatedRecord
 	 */
-	public static void record(UserOperation userOperation, boolean isSimulatedRecord) {
+	public static void record(UserOperation userOperation) {
 		long operationTime= userOperation.getTime();
 		//Before any user operation, except text change operations, flush the accumulated AST changes.
 		if (!(userOperation instanceof TextChangeOperation)) {
@@ -45,22 +44,20 @@ public class ASTInferenceTextRecorder {
 			astRecorder.flushCurrentTextChanges(!(userOperation instanceof SavedFileOperation));
 		}
 		lastTimestamp= operationTime;
-		performRecording(userOperation, isSimulatedRecord);
+		performRecording(userOperation);
 	}
 
 	public static void recordASTOperation(ASTOperationDescriptor operationDescriptor, CompositeNodeDescriptor affectedNodeDescriptor) {
 		ASTOperation astOperation= new ASTOperation(operationDescriptor, affectedNodeDescriptor, getASTOperationTimestamp());
-		performRecording(astOperation, false);
+		performRecording(astOperation);
 	}
 
 	public static void recordASTFileOperation(String astFilePath) {
-		performRecording(new ASTFileOperation(astFilePath, getASTOperationTimestamp()), false);
+		performRecording(new ASTFileOperation(astFilePath, getASTOperationTimestamp()));
 	}
 
-	private static void performRecording(UserOperation userOperation, boolean isSimulatedRecord) {
-		if (!isSimulatedRecord) {
+	private static void performRecording(UserOperation userOperation) {
 			safeRecorder.record(userOperation.generateSerializationText());
-		}
 	}
 
 	private static long getASTOperationTimestamp() {

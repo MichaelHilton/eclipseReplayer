@@ -296,7 +296,7 @@ public class ASTOperationRecorder {
 		CoherentTextChange lastTextChange= batchTextChanges.size() == 1 ? batchTextChanges.get(0) : null;
 		if (!Configuration.isInRefactoringInferenceMode && lastTextChange != null &&
 				!lastTextChange.isConflictEditorChange()) {
-			ASTInferenceTextRecorder.record(lastTextChange.createTextChangeOperation(), false);
+			ASTInferenceTextRecorder.record(lastTextChange.createTextChangeOperation());
 		}
 		if (isInProblemMode) {
 			flushProblematicTextChanges(isForced);
