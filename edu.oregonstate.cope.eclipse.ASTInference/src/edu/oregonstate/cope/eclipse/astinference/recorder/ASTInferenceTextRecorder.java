@@ -24,19 +24,30 @@ import edu.oregonstate.cope.eclipse.astinference.ast.ASTOperationRecorder;
  * 
  */
 public class ASTInferenceTextRecorder {
+	
+	private static class Instance{
+		public static final ASTInferenceTextRecorder _instance = new ASTInferenceTextRecorder();
+	}
 
 	private final static ASTOperationRecorder astRecorder= ASTOperationRecorder.getInstance();
 
-	private final static SafeRecorder safeRecorder= new SafeRecorder("codingtracker/codechanges_ast.txt");
-	
 	private static long lastTimestamp;
+
+	private ASTJSONRecorder recorder;
 	
 	private ASTInferenceTextRecorder() {
+		setRecordingDirectory(new File("copeRecording"));
+	}
+	
+	public static ASTInferenceTextRecorder getInstance(){
+		return Instance._instance;
+	}
+
+	public void setRecordingDirectory(final File recordingDirectory){
 		ASTRecorderFacade astRecorderFacade = new ASTRecorderFacade(new StorageManager() {
-			private final static String filePath = "copeRecorder";
 			
 			private File getStorage(){
-				return new File(filePath);
+				return recordingDirectory;
 			}
 			
 			@Override
@@ -61,10 +72,9 @@ public class ASTInferenceTextRecorder {
 			
 		}, "Eclipse");
 		
-		ASTJSONRecorder recorder = (ASTJSONRecorder) astRecorderFacade.getClientRecorder();
+		recorder = (ASTJSONRecorder) astRecorderFacade.getClientRecorder();
 	}
-
-
+	
 	/**
 	 * When isSimulatedRecord is true, this method flushes the text changes, if necessary, and
 	 * updates the timestamp.
