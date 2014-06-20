@@ -6,7 +6,6 @@ package edu.oregonstate.cope.eclipse.astinference.recorder;
 
 import java.io.File;
 
-import edu.illinois.codingspectator.saferecorder.SafeRecorder;
 import edu.illinois.codingtracker.helpers.Configuration;
 import edu.illinois.codingtracker.operations.UserOperation;
 import edu.illinois.codingtracker.operations.ast.ASTFileOperation;
