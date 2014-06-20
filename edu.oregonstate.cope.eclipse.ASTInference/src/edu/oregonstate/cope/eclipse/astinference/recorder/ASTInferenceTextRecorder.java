@@ -15,6 +15,7 @@ import edu.illinois.codingtracker.operations.ast.ASTOperationDescriptor;
 import edu.illinois.codingtracker.operations.ast.CompositeNodeDescriptor;
 import edu.illinois.codingtracker.operations.files.SavedFileOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
+import edu.oregonstate.cope.clientRecorder.RecorderFacade;
 import edu.oregonstate.cope.clientRecorder.StorageManager;
 import edu.oregonstate.cope.eclipse.astinference.ast.ASTOperationRecorder;
 
@@ -38,7 +39,7 @@ public class ASTInferenceTextRecorder {
 	private ASTInferenceTextRecorder() {
 		setRecordingDirectory(new File("copeRecording"));
 	}
-	
+
 	public static ASTInferenceTextRecorder getInstance(){
 		return Instance._instance;
 	}
@@ -90,23 +91,28 @@ public class ASTInferenceTextRecorder {
 			astRecorder.flushCurrentTextChanges(!(userOperation instanceof SavedFileOperation));
 		}
 		lastTimestamp= operationTime;
-		performRecording(userOperation);
+		
+		if(userOperation instanceof TextChangeOperation){
+			TextChangeOperation op = (TextChangeOperation) userOperation;
+			recorder.recordTextChange(op.getNewText(), op.getOffset(), op.getLength(), "missing", "glued");
+		}
+		else
+			System.err.println(userOperation.getClass().getName() + " not supported in inference recording");
 	}
 
 	public void recordASTOperation(ASTOperationDescriptor operationDescriptor, CompositeNodeDescriptor affectedNodeDescriptor) {
 		ASTOperation astOperation= new ASTOperation(operationDescriptor, affectedNodeDescriptor, getASTOperationTimestamp());
-		performRecording(astOperation);
+		
+		recorder.recordASTOperation(astOperation);
 	}
 
-	public static void recordASTFileOperation(String astFilePath) {
-		performRecording(new ASTFileOperation(astFilePath, getASTOperationTimestamp()));
-	}
-
-		safeRecorder.record(userOperation.generateSerializationText());
 	public void recordASTFileOperation(String astFilePath) {
+		//performRecording(new ASTFileOperation(astFilePath, getASTOperationTimestamp()));
+		
+		//do not record this
 	}
 
-	private static long getASTOperationTimestamp() {
+	private long getASTOperationTimestamp() {
 		if (Configuration.isInReplayMode) {
 			return lastTimestamp;
 		} else {
