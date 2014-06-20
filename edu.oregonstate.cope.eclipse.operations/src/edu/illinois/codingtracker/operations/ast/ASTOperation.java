@@ -5,6 +5,8 @@ package edu.illinois.codingtracker.operations.ast;
 
 import java.util.Set;
 
+import org.json.simple.JSONObject;
+
 import edu.illinois.codingtracker.operations.OperationLexer;
 import edu.illinois.codingtracker.operations.OperationSymbols;
 import edu.illinois.codingtracker.operations.OperationTextChunk;
@@ -171,6 +173,13 @@ public class ASTOperation extends UserOperation {
 		affectedNodeDescriptor.appendContent(sb);
 		sb.append(super.toString());
 		return sb.toString();
+	}
+	
+	@Override
+	public void parse(JSONObject value) {
+		super.parse(value);
+		
+		
 	}
 
 }

@@ -26,13 +26,13 @@ import edu.illinois.codingtracker.operations.ast.CompositeNodeDescriptor;
 import edu.illinois.codingtracker.operations.files.snapshoted.RefreshedFileOperation;
 import edu.illinois.codingtracker.operations.textchanges.ConflictEditorTextChangeOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
-import edu.oregonstate.cope.eclipse.astinference.ASTInferenceTextRecorder;
 import edu.oregonstate.cope.eclipse.astinference.ast.helpers.ASTHelper;
 import edu.oregonstate.cope.eclipse.astinference.ast.helpers.CyclomaticComplexityCalculator;
 import edu.oregonstate.cope.eclipse.astinference.ast.identification.ASTNodesIdentifier;
 import edu.oregonstate.cope.eclipse.astinference.ast.identification.IdentifiedNodeInfo;
 import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.ASTOperationInferencer;
 import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.CoherentTextChange;
+import edu.oregonstate.cope.eclipse.astinference.recorder.ASTInferenceTextRecorder;
 
 /**
  * 
@@ -296,7 +296,7 @@ public class ASTOperationRecorder {
 		CoherentTextChange lastTextChange= batchTextChanges.size() == 1 ? batchTextChanges.get(0) : null;
 		if (!Configuration.isInRefactoringInferenceMode && lastTextChange != null &&
 				!lastTextChange.isConflictEditorChange()) {
-			ASTInferenceTextRecorder.record(lastTextChange.createTextChangeOperation(), false);
+			ASTInferenceTextRecorder.getInstance().record(lastTextChange.createTextChangeOperation());
 		}
 		if (isInProblemMode) {
 			flushProblematicTextChanges(isForced);
@@ -502,11 +502,11 @@ public class ASTOperationRecorder {
 		if (!filePath.equals(currentRecordedFilePath)) {
 			currentRecordedFilePath= filePath;
 			if (!Configuration.isInRefactoringInferenceMode) {
-				ASTInferenceTextRecorder.recordASTFileOperation(currentRecordedFilePath);
+				ASTInferenceTextRecorder.getInstance().recordASTFileOperation(currentRecordedFilePath);
 			}
 		}
 		if (!Configuration.isInRefactoringInferenceMode) {
-			ASTInferenceTextRecorder.recordASTOperation(operationDescriptor, affectedNodeDescriptor);
+			ASTInferenceTextRecorder.getInstance().recordASTOperation(operationDescriptor, affectedNodeDescriptor);
 		}
 	}
 
