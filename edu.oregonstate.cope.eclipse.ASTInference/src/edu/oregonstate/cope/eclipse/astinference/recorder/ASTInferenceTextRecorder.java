@@ -81,7 +81,7 @@ public class ASTInferenceTextRecorder {
 	 * 
 	 * @param userOperation
 	 */
-	public static void record(UserOperation userOperation) {
+	public void record(UserOperation userOperation) {
 		long operationTime= userOperation.getTime();
 		//Before any user operation, except text change operations, flush the accumulated AST changes.
 		if (!(userOperation instanceof TextChangeOperation)) {
@@ -93,7 +93,7 @@ public class ASTInferenceTextRecorder {
 		performRecording(userOperation);
 	}
 
-	public static void recordASTOperation(ASTOperationDescriptor operationDescriptor, CompositeNodeDescriptor affectedNodeDescriptor) {
+	public void recordASTOperation(ASTOperationDescriptor operationDescriptor, CompositeNodeDescriptor affectedNodeDescriptor) {
 		ASTOperation astOperation= new ASTOperation(operationDescriptor, affectedNodeDescriptor, getASTOperationTimestamp());
 		performRecording(astOperation);
 	}
@@ -102,8 +102,8 @@ public class ASTInferenceTextRecorder {
 		performRecording(new ASTFileOperation(astFilePath, getASTOperationTimestamp()));
 	}
 
-	private static void performRecording(UserOperation userOperation) {
 		safeRecorder.record(userOperation.generateSerializationText());
+	public void recordASTFileOperation(String astFilePath) {
 	}
 
 	private static long getASTOperationTimestamp() {

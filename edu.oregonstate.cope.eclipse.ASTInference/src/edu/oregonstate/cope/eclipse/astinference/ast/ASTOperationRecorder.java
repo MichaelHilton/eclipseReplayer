@@ -296,7 +296,7 @@ public class ASTOperationRecorder {
 		CoherentTextChange lastTextChange= batchTextChanges.size() == 1 ? batchTextChanges.get(0) : null;
 		if (!Configuration.isInRefactoringInferenceMode && lastTextChange != null &&
 				!lastTextChange.isConflictEditorChange()) {
-			ASTInferenceTextRecorder.record(lastTextChange.createTextChangeOperation());
+			ASTInferenceTextRecorder.getInstance().record(lastTextChange.createTextChangeOperation());
 		}
 		if (isInProblemMode) {
 			flushProblematicTextChanges(isForced);
@@ -502,11 +502,11 @@ public class ASTOperationRecorder {
 		if (!filePath.equals(currentRecordedFilePath)) {
 			currentRecordedFilePath= filePath;
 			if (!Configuration.isInRefactoringInferenceMode) {
-				ASTInferenceTextRecorder.recordASTFileOperation(currentRecordedFilePath);
+				ASTInferenceTextRecorder.getInstance().recordASTFileOperation(currentRecordedFilePath);
 			}
 		}
 		if (!Configuration.isInRefactoringInferenceMode) {
-			ASTInferenceTextRecorder.recordASTOperation(operationDescriptor, affectedNodeDescriptor);
+			ASTInferenceTextRecorder.getInstance().recordASTOperation(operationDescriptor, affectedNodeDescriptor);
 		}
 	}
 
