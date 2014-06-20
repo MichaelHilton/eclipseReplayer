@@ -26,13 +26,13 @@ import edu.illinois.codingtracker.operations.ast.CompositeNodeDescriptor;
 import edu.illinois.codingtracker.operations.files.snapshoted.RefreshedFileOperation;
 import edu.illinois.codingtracker.operations.textchanges.ConflictEditorTextChangeOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
-import edu.oregonstate.cope.eclipse.astinference.ASTInferenceTextRecorder;
 import edu.oregonstate.cope.eclipse.astinference.ast.helpers.ASTHelper;
 import edu.oregonstate.cope.eclipse.astinference.ast.helpers.CyclomaticComplexityCalculator;
 import edu.oregonstate.cope.eclipse.astinference.ast.identification.ASTNodesIdentifier;
 import edu.oregonstate.cope.eclipse.astinference.ast.identification.IdentifiedNodeInfo;
 import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.ASTOperationInferencer;
 import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.CoherentTextChange;
+import edu.oregonstate.cope.eclipse.astinference.recorder.ASTInferenceTextRecorder;
 
 /**
  * 
