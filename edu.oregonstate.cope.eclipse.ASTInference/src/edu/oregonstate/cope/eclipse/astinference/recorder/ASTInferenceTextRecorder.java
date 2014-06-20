@@ -4,6 +4,8 @@
 package edu.oregonstate.cope.eclipse.astinference.recorder;
 
 
+import java.io.File;
+
 import edu.illinois.codingspectator.saferecorder.SafeRecorder;
 import edu.illinois.codingtracker.helpers.Configuration;
 import edu.illinois.codingtracker.operations.UserOperation;
@@ -13,6 +15,7 @@ import edu.illinois.codingtracker.operations.ast.ASTOperationDescriptor;
 import edu.illinois.codingtracker.operations.ast.CompositeNodeDescriptor;
 import edu.illinois.codingtracker.operations.files.SavedFileOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
+import edu.oregonstate.cope.clientRecorder.StorageManager;
 import edu.oregonstate.cope.eclipse.astinference.ast.ASTOperationRecorder;
 
 /**
@@ -25,8 +28,41 @@ public class ASTInferenceTextRecorder {
 	private final static ASTOperationRecorder astRecorder= ASTOperationRecorder.getInstance();
 
 	private final static SafeRecorder safeRecorder= new SafeRecorder("codingtracker/codechanges_ast.txt");
-
+	
 	private static long lastTimestamp;
+	
+	private ASTInferenceTextRecorder() {
+		ASTRecorderFacade astRecorderFacade = new ASTRecorderFacade(new StorageManager() {
+			private final static String filePath = "copeRecorder";
+			
+			private File getStorage(){
+				return new File(filePath);
+			}
+			
+			@Override
+			public File getVersionedLocalStorage() {
+				return getStorage();
+			}
+			
+			@Override
+			public File getVersionedBundleStorage() {
+				return getStorage();
+			}
+			
+			@Override
+			public File getLocalStorage() {
+				return getStorage();
+			}
+			
+			@Override
+			public File getBundleStorage() {
+				return getStorage();
+			}
+			
+		}, "Eclipse");
+		
+		ASTJSONRecorder recorder = (ASTJSONRecorder) astRecorderFacade.getClientRecorder();
+	}
 
 
 	/**
@@ -57,7 +93,7 @@ public class ASTInferenceTextRecorder {
 	}
 
 	private static void performRecording(UserOperation userOperation) {
-			safeRecorder.record(userOperation.generateSerializationText());
+		safeRecorder.record(userOperation.generateSerializationText());
 	}
 
 	private static long getASTOperationTimestamp() {
