@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests
+Bundle-SymbolicName: edu.oregonstate.cope.eclipse.ASTInference.tests
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: edu.oregonstate.cope.eclipse.ASTInference;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: junit.framework,
+ org.junit;version="4.11.0"
