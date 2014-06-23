@@ -1,5 +1,7 @@
 package edu.oregonstate.cope.eclipse.astinference.ast;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.DocumentEvent;
 
@@ -15,6 +17,7 @@ import edu.illinois.codingtracker.operations.resources.CreatedResourceOperation;
 import edu.illinois.codingtracker.operations.resources.DeletedResourceOperation;
 import edu.illinois.codingtracker.operations.resources.MovedResourceOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
+import edu.oregonstate.cope.eclipse.astinference.recorder.ASTInferenceTextRecorder;
 
 public class ASTInferencerFacade {
 	private ASTOperationRecorder astRecorder;
@@ -71,5 +74,9 @@ public class ASTInferencerFacade {
 		else if (currentUserOperation instanceof MovedResourceOperation) {
 			System.err.println("handleResourceOperation did not handle move");
 		}
+	}
+	
+	public void setRecordingDirectory(File recordingDirectory){
+		ASTInferenceTextRecorder.getInstance().setRecordingDirectory(recordingDirectory);
 	}
 }
