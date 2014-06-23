@@ -10,6 +10,7 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import edu.illinois.codingtracker.operations.ast.ASTOperation;
 import edu.illinois.codingtracker.operations.files.ClosedFileOperation;
 import edu.illinois.codingtracker.operations.files.CompareWithSnapshot;
 import edu.illinois.codingtracker.operations.files.EditedFileOperation;
@@ -134,8 +135,6 @@ public class OperationDeserializer {
 		}
 	}
 	
-	
-
 	private static UserOperation createEmptyUserOperation(String operationSymbol) {
 		UserOperation userOperation = null;
 		if(operationSymbol.equals("textChange")){
@@ -167,11 +166,10 @@ public class OperationDeserializer {
 			userOperation= new CreatedResourceOperation();
 		}else if(operationSymbol.equals("refresh")){
 			userOperation= new ExternallyModifiedResourceOperation();
+		}else if (operationSymbol.equals("astOperation")) {
+			userOperation = new ASTOperation();
 		}
-		//refactoringLaunch
-		
-		//userOperation= new SavedFileOperation();
-		//normalLaunch
+
 		return userOperation;
 	}
 	
