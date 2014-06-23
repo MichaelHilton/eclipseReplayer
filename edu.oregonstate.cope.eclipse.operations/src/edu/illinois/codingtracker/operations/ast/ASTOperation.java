@@ -179,7 +179,11 @@ public class ASTOperation extends UserOperation {
 	public void parse(JSONObject value) {
 		super.parse(value);
 		
+		String astContent = (String) value.get("content");
 		
+		OperationLexer operationLexer = new OperationLexer(astContent);
+		operationLexer.startNewOperation();
+		
+		initializeFrom(operationLexer);
 	}
-
 }
