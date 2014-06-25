@@ -3,20 +3,6 @@
  */
 package edu.oregonstate.cope.eclipse.astinference.ast;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.DocumentEvent;
-
 import edu.illinois.codingtracker.helpers.Configuration;
 import edu.illinois.codingtracker.helpers.ResourceHelper;
 import edu.illinois.codingtracker.helpers.StringHelper;
@@ -24,6 +10,7 @@ import edu.illinois.codingtracker.operations.ast.ASTOperationDescriptor;
 import edu.illinois.codingtracker.operations.ast.ASTOperationDescriptor.OperationKind;
 import edu.illinois.codingtracker.operations.ast.CompositeNodeDescriptor;
 import edu.illinois.codingtracker.operations.files.snapshoted.RefreshedFileOperation;
+import edu.illinois.codingtracker.operations.resources.CreatedResourceOperation;
 import edu.illinois.codingtracker.operations.textchanges.ConflictEditorTextChangeOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
 import edu.oregonstate.cope.eclipse.astinference.ast.helpers.ASTHelper;
@@ -33,6 +20,19 @@ import edu.oregonstate.cope.eclipse.astinference.ast.identification.IdentifiedNo
 import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.ASTOperationInferencer;
 import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.CoherentTextChange;
 import edu.oregonstate.cope.eclipse.astinference.recorder.ASTInferenceTextRecorder;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * 
@@ -556,12 +556,25 @@ public class ASTOperationRecorder {
 		}
 	}
 
+    public void recordASTOperationForCreatedResource(CreatedResourceOperation createdResourceOperation) {
+        if (createdResourceOperation.getResourcePath().toString().contains(".java")) {
+            addAllNodesFromJavaFile(createdResourceOperation);
+        }
+    }
+
 	private void addAllNodesFromJavaFile(String filePath, IFile javaFile) {
 		Set<ASTNode> allNodes= ASTHelper.getAllNodesFromText(ResourceHelper.readFileContent(javaFile));
 		recordAddASTOperations(filePath, allNodes, false, false);
 	}
 
-	private class DocumentEventDescriptor {
+
+    private void addAllNodesFromJavaFile(CreatedResourceOperation createdResourceOperation) {
+        Set<ASTNode> allNodes= ASTHelper.getAllNodesFromText(createdResourceOperation.getFileContent());
+        recordAddASTOperations(createdResourceOperation.getResourcePath(), allNodes, false, false);
+    }
+
+
+    private class DocumentEventDescriptor {
 
 		final DocumentEvent documentEvent;
 

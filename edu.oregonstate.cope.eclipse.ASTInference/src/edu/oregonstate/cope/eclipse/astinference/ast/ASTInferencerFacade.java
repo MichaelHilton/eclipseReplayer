@@ -53,6 +53,19 @@ public class ASTInferencerFacade {
 		}
 	}
 
+
+    public void handleResourceOperation(UserOperation currentUserOperation, String replayDir) {
+        if (currentUserOperation instanceof CreatedResourceOperation) {
+            astRecorder.recordASTOperationForCreatedResource((CreatedResourceOperation)currentUserOperation);
+        }
+        else if (currentUserOperation instanceof DeletedResourceOperation) {
+            DeletedResourceOperation op= (DeletedResourceOperation)currentUserOperation;
+            IResource resource= ResourceHelper.findWorkspaceMember(op.getResourcePath());
+            astRecorder.recordASTOperationForDeletedResource(resource, true);
+        }
+    }
+
+
 	public void handleResourceOperation(UserOperation currentUserOperation) {
 		if (currentUserOperation instanceof CreatedResourceOperation) {
 			CreatedResourceOperation op= (CreatedResourceOperation)currentUserOperation;
