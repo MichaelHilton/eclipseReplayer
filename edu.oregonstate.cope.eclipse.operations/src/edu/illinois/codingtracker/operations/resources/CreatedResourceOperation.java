@@ -38,6 +38,10 @@ public class CreatedResourceOperation extends UpdatedResourceOperation {
 		}
 	}
 
+    public String getFileContent() {
+        return fileContent;
+    }
+
 	@Override
 	protected char getOperationSymbol() {
 		return OperationSymbols.RESOURCE_CREATED_SYMBOL;
