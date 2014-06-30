@@ -64,19 +64,28 @@ public class ASTInferencerFacade {
 	}
 
 
-    public void handleResourceOperation(UserOperation currentUserOperation, String replayDir) {
+    public void handleResourceOperation(UserOperation currentUserOperation) {
         if (currentUserOperation instanceof CreatedResourceOperation) {
             astRecorder.recordASTOperationForCreatedResource((CreatedResourceOperation)currentUserOperation);
         }
+        
         else if (currentUserOperation instanceof DeletedResourceOperation) {
             DeletedResourceOperation op= (DeletedResourceOperation)currentUserOperation;
             IResource resource= ResourceHelper.findWorkspaceMember(op.getResourcePath());
             astRecorder.recordASTOperationForDeletedResource(resource, true);
         }
+        
+        else if (currentUserOperation instanceof CopiedResourceOperation) {
+			System.err.println("handleResourceOperation did not handle copy");
+		}
+        
+		else if (currentUserOperation instanceof MovedResourceOperation) {
+			System.err.println("handleResourceOperation did not handle move");
+		}
     }
 
 
-	public void handleResourceOperation(UserOperation currentUserOperation) {
+/*	public void handleResourceOperation(UserOperation currentUserOperation) {
 		if (currentUserOperation instanceof CreatedResourceOperation) {
 			CreatedResourceOperation op= (CreatedResourceOperation)currentUserOperation;
 			IResource resource= ResourceHelper.findWorkspaceMember(op.getResourcePath());
@@ -97,7 +106,7 @@ public class ASTInferencerFacade {
 		else if (currentUserOperation instanceof MovedResourceOperation) {
 			System.err.println("handleResourceOperation did not handle move");
 		}
-	}
+	}*/
 	
 	public void setRecordingDirectory(File recordingDirectory){
 		ASTInferenceTextRecorder.getInstance().setRecordingDirectory(recordingDirectory);
