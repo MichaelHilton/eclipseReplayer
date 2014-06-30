@@ -13,3 +13,5 @@ clientRecorder.iml
 /edu.oregonstate.cope.eclipse.updatesite/artifacts.jar
 
 /External\ Plug-in\ Libraries
+
+.recommenders/
