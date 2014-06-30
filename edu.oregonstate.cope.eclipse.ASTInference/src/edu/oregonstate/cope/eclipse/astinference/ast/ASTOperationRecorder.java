@@ -558,6 +558,7 @@ public class ASTOperationRecorder {
 
     public void recordASTOperationForCreatedResource(CreatedResourceOperation createdResourceOperation) {
         if (createdResourceOperation.getResourcePath().toString().contains(".java")) {
+        	CyclomaticComplexityCalculator.resetCache();
             addAllNodesFromJavaFile(createdResourceOperation);
         }
     }
