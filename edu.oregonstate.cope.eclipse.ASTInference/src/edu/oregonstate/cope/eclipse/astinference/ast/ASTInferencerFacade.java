@@ -37,8 +37,18 @@ public class ASTInferencerFacade {
 	public void beforeDocumentChanged(UserOperation userOperation) {
 		if (userOperation instanceof TextChangeOperation) {
 			TextChangeOperation op= (TextChangeOperation)userOperation;
-			DocumentEvent documentEvent= op.getDocumentEvent(op.getEditedText());
-			astRecorder.beforeDocumentChange(documentEvent, op.getEditedFilePath());
+			
+			beforeDocumentChanged(op, op.getEditedText(), op.getEditedFilePath());
+		}
+		else
+			System.err.println("beforeDocumenChange did not handle: " + userOperation.getClass());
+	}
+	
+	public void beforeDocumentChanged(UserOperation userOperation, String fileContentsBeforeChange, String filePath) {
+		if (userOperation instanceof TextChangeOperation) {
+			TextChangeOperation op= (TextChangeOperation)userOperation;
+			DocumentEvent documentEvent= op.getDocumentEvent(fileContentsBeforeChange);
+			astRecorder.beforeDocumentChange(documentEvent, filePath);
 		}
 		else
 			System.err.println("beforeDocumenChange did not handle: " + userOperation.getClass());
