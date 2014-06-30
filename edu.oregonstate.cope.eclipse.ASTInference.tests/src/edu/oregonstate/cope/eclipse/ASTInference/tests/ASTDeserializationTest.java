@@ -36,7 +36,7 @@ public class ASTDeserializationTest {
 		assertASTDeserializationForBasicFile(userOperations);
 	}
 
-	private void assertASTDeserializationForBasicFile(List<UserOperation> userOperations) {
+	public void assertASTDeserializationForBasicFile(List<UserOperation> userOperations) {
 		int totalEvents = 0;
 		int astEvents = 0;
 		int astAdded = 0;
