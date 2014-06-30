@@ -31,8 +31,12 @@ public class ASTDeserializationTest {
 	}
 	
 	@Test
-	public void testASTDeserialization() throws Exception {
+	public void testASTDeserializationBasicFile() throws Exception {
 		List<UserOperation> userOperations = new OperationDeserializer(null).getUserOperations(astEventFileContents);
+		assertASTDeserializationForBasicFile(userOperations);
+	}
+
+	private void assertASTDeserializationForBasicFile(List<UserOperation> userOperations) {
 		int totalEvents = 0;
 		int astEvents = 0;
 		int astAdded = 0;
