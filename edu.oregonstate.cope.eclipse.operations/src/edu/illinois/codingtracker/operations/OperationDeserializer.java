@@ -71,14 +71,19 @@ public class OperationDeserializer {
 	      }
       }
      
-      preprocessJSONArray(JSONObjs);
-      
-      for(JSONObject jsonObj : JSONObjs){
-    	  String eventName = (String) jsonObj.get("eventType");
-          System.out.println(eventName);
-          addUserOperation(userOperations, jsonObj, eventName);
-      }
-      return userOperations;
+		preprocessJSONArray(JSONObjs);
+
+		for (JSONObject jsonObj : JSONObjs) {
+			String eventName = (String) jsonObj.get("eventType");
+			System.out.println(eventName);
+			UserOperation userOp = buildUserOperation(jsonObj, eventName);
+
+			if (userOp != null) {
+				userOperations.add(userOp);
+			}
+		}
+		
+		return userOperations;
 	}
 
 	
@@ -126,13 +131,14 @@ public class OperationDeserializer {
 		removeSpuriousEventsBeforeRecourceCreated(jsonObjs);
 	}
 
-	private void addUserOperation(List<UserOperation> userOperations, JSONObject value, String eventName) {
+	public UserOperation buildUserOperation(JSONObject value, String eventName) {
 		UserOperation userOperation= createEmptyUserOperation(eventName);
 		if(userOperation != null){ 
 			userOperation.parse(value);
 			userOperation.setEventFilePath(this.getEventFilePath());
-			userOperations.add(userOperation);
 		}
+		
+		return userOperation;
 	}
 	
 	private static UserOperation createEmptyUserOperation(String operationSymbol) {
