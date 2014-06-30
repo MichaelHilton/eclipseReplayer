@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.eclipse.ltk.core.refactoring.TextChange;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -32,14 +33,37 @@ public class ASTDeserializationTest {
 	@Test
 	public void testASTDeserialization() throws Exception {
 		List<UserOperation> userOperations = new OperationDeserializer(null).getUserOperations(astEventFileContents);
+		int totalEvents = 0;
 		int astEvents = 0;
+		int astAdded = 0;
+		int astChanged = 0;
+		int astDeleted = 0;
 		
 		for (UserOperation userOperation : userOperations) {
 			if (userOperation instanceof ASTOperation) {
+				ASTOperation astOP = (ASTOperation) userOperation;
 				astEvents++;
+				
+				if (astOP.isAdd()) {
+					astAdded ++;
+				}
+				
+				if (astOP.isChange()) {
+					astChanged ++;
+				}
+				
+				if (astOP.isDelete()) {
+					astDeleted ++;
+				}
 			}
+			
+			totalEvents ++;
 		}
 		
-		assertTrue(astEvents > 0);
+		assertEquals(43, totalEvents);
+		assertEquals(38, astEvents);
+		assertEquals(20, astAdded);
+		assertEquals(2, astChanged);
+		assertEquals(16, astDeleted);
 	}
 }
