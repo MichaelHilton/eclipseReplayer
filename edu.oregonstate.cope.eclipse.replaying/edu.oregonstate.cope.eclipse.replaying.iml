@@ -7,20 +7,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="JavaSE-1.7" jdkType="JavaSDK" />
-    <orderEntry type="module" module-name="edu.oregonstate.cope.eclipse.helpers" />
     <orderEntry type="module" module-name="edu.oregonstate.cope.eclipse.operations" />
+    <orderEntry type="module" module-name="edu.oregonstate.cope.eclipse.jdt.project.manipulation" />
+    <orderEntry type="module" module-name="edu.oregonstate.cope.eclipse.helpers" />
+    <orderEntry type="module" module-name="edu.oregonstate.cope.eclipse.ASTInference" />
     <orderEntry type="library" name="ECLIPSE" level="application" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="edu.oregonstate.cope.clientrecorder" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../recorderInfra/edu.oregonstate.cope.thirdparty/json-simple-1.1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
   </component>
 </module>
 

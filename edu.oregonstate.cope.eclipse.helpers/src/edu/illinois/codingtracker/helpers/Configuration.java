@@ -27,7 +27,7 @@ public class Configuration {
 
 	public static final boolean isInPostprocessMode= postprocessorRootFolderName != null;
 
-	public static final boolean isInASTInferenceMode= System.getenv("AST_INFERENCE_MODE") != null;
+	public static final boolean isInASTInferenceMode= true;
 
 	public static final boolean isInRefactoringInferenceMode= System.getenv("REFACTORING_INFERENCE_MODE") != null;
 
