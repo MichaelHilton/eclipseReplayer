@@ -23,12 +23,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import edu.illinois.codingtracker.compare.helpers.EditorHelper;
-import edu.illinois.codingtracker.helpers.Configuration;
 import edu.illinois.codingtracker.helpers.ResourceHelper;
 import edu.illinois.codingtracker.helpers.ViewerHelper;
 import edu.illinois.codingtracker.operations.JavaProjectsUpkeeper;
@@ -496,7 +494,7 @@ public class UserOperationReplayer {
 				currentUserOperation.replay();
 			}
 			
-			astInferencer.flushCurrentTextChanges(currentUserOperation);
+			astInferencer.flushCurrentTextChanges(currentUserOperation, iASTObj);
 			astInferencer.handleResourceOperation(currentUserOperation);
 			
 			//currentEditor= EditorHelper.getActiveEditor();

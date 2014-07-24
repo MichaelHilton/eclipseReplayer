@@ -8,13 +8,11 @@ import java.io.File;
 
 import edu.illinois.codingtracker.helpers.Configuration;
 import edu.illinois.codingtracker.operations.UserOperation;
-import edu.illinois.codingtracker.operations.ast.ASTFileOperation;
 import edu.illinois.codingtracker.operations.ast.ASTOperation;
 import edu.illinois.codingtracker.operations.ast.ASTOperationDescriptor;
 import edu.illinois.codingtracker.operations.ast.CompositeNodeDescriptor;
 import edu.illinois.codingtracker.operations.files.SavedFileOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
-import edu.oregonstate.cope.clientRecorder.RecorderFacade;
 import edu.oregonstate.cope.clientRecorder.StorageManager;
 import edu.oregonstate.cope.eclipse.astinference.ast.ASTOperationRecorder;
 
@@ -87,7 +85,7 @@ public class ASTInferenceTextRecorder {
 		if (!(userOperation instanceof TextChangeOperation)) {
 			//TODO: Some part of the below code are duplicated in TextRecorder.
 			//Saving a file does not force flushing since the corresponding AST might be broken.
-			astRecorder.flushCurrentTextChanges(!(userOperation instanceof SavedFileOperation));
+			astRecorder.flushCurrentTextChanges(!(userOperation instanceof SavedFileOperation), null);
 		}
 		lastTimestamp= operationTime;
 		

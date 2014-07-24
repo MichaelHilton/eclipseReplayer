@@ -22,7 +22,9 @@ import edu.oregonstate.cope.eclipse.astinference.ast.identification.ASTNodesIden
 import edu.oregonstate.cope.eclipse.astinference.ast.identification.IdentifiedNodeInfo;
 import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.ASTOperationInferencer;
 import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.CoherentTextChange;
+import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.InferredAST;
 import edu.oregonstate.cope.eclipse.astinference.recorder.ASTInferenceTextRecorder;
+import fr.labri.gumtree.client.ui.xml.JSONDiff;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -87,6 +89,8 @@ public class ASTOperationRecorder {
 
 	private Map<ASTNode, ASTNode> lastMatchedNodes;
 
+    private JSONObject inferredASTObjects;
+
 
 	public static ASTOperationRecorder getInstance() {
 		if (astRecorderInstance == null) {
@@ -102,6 +106,8 @@ public class ASTOperationRecorder {
 	ASTOperationRecorder() { //hide the constructor
 		//do nothing
 	}
+
+    public JSONObject getcurrInferredASTObjects() {return inferredASTObjects;}
 
 	public String getCurrentRecordedFilePath() {
 		return currentRecordedFilePath;
@@ -140,30 +146,30 @@ public class ASTOperationRecorder {
 		isInProblemMode= false;
 	}
 
-	public void beforeDocumentChange(DocumentEvent event, String filePath) {
+	public void beforeDocumentChange(DocumentEvent event, String filePath, InferredAST iASTObj) {
 		if (RefreshedFileOperation.isReplaying) {
 			//ignore
 			return;
 		}
 		//If we start to edit a different file, flush the accumulated changes.
 		if (currentEditedFilePath != null && !currentEditedFilePath.equals(filePath)) {
-			flushCurrentTextChanges(true);
+			flushCurrentTextChanges(true, iASTObj);
 		}
 		long timestamp= getTextChangeTimestamp();
-		addNewBatchChange(event, timestamp);
+		addNewBatchChange(event, timestamp, iASTObj);
 		//Assign the current file path at the end to ensure that any prior flushing uses the old file path.
 		currentEditedFilePath= filePath;
 	}
 
-	private void addNewBatchChange(DocumentEvent event, long timestamp) {
+	private void addNewBatchChange(DocumentEvent event, long timestamp, InferredAST iASTObj) {
 		if (batchTextChanges.isEmpty()) {
 			batchTextChanges.add(new CoherentTextChange(event, ConflictEditorTextChangeOperation.isReplaying, timestamp));
 		} else {
-			addToCurrentTextChanges(event, timestamp);
+			addToCurrentTextChanges(event, timestamp,iASTObj);
 		}
 	}
 
-	private void addToCurrentTextChanges(DocumentEvent event, long timestamp) {
+	private void addToCurrentTextChanges(DocumentEvent event, long timestamp, InferredAST iASTObj) {
 		if (correlatedBatchSize == -1) { //Batch size is not established yet.
 			if (shouldExtendBatch(event, timestamp)) {
 				batchTextChanges.add(new CoherentTextChange(event, ConflictEditorTextChangeOperation.isReplaying, timestamp));
@@ -172,10 +178,10 @@ public class ASTOperationRecorder {
 				correlatedBatchSize= batchTextChanges.size();
 				currentIndexToGlueWith= 0;
 				updateBatchBackup();
-				tryGluingInBatch(event, timestamp);
+				tryGluingInBatch(event, timestamp,iASTObj);
 			}
 		} else { //Batch size is already established.
-			tryGluingInBatch(event, timestamp);
+			tryGluingInBatch(event, timestamp, iASTObj);
 		}
 	}
 
@@ -206,7 +212,7 @@ public class ASTOperationRecorder {
 		}
 	}
 
-	private void tryGluingInBatch(DocumentEvent event, long timestamp) {
+	private void tryGluingInBatch(DocumentEvent event, long timestamp, InferredAST iASTObj) {
 		CoherentTextChange textChangeToGlueWith= batchTextChanges.get(currentIndexToGlueWith);
 		if (!Configuration.isInRefactoringInferenceMode && shouldContinueBatch(event, timestamp) && textChangeToGlueWith.shouldGlueNewTextChange(event)) {
 			textChangeToGlueWith.glueNewTextChange(event);
@@ -217,11 +223,11 @@ public class ASTOperationRecorder {
 			incrementGluingIndex();
 		} else {
 			if (isAnythingToFlush() && isBatchIncomplete()) {
-				flushBatchBackup(false, true);
+				flushBatchBackup(false, true,iASTObj);
 			} else {
-				flushCurrentTextChanges(false);
+				flushCurrentTextChanges(false, iASTObj);
 			}
-			addNewBatchChange(event, timestamp);
+			addNewBatchChange(event, timestamp, iASTObj);
 		}
 	}
 
@@ -272,16 +278,16 @@ public class ASTOperationRecorder {
 		}
 	}
 
-	public void flushCurrentTextChanges(boolean isForced) {
+	public void flushCurrentTextChanges(boolean isForced, InferredAST iASTObj) {
 		if (isAnythingToFlush()) {
 			if (isBatchIncomplete()) {
-				flushBatchBackup(isForced, false);
+				flushBatchBackup(isForced, false, iASTObj);
 			} else {
 				checkBatchedEditIsWellFormed();
 				if (batchTextChanges.size() > 1) {
-					flushBatchAsSeparateChanges(isForced);
+					flushBatchAsSeparateChanges(isForced,iASTObj);
 				} else {
-					flushSingleBatchTextChange(isForced);
+					flushSingleBatchTextChange(isForced,iASTObj);
 				}
 			}
 		}
@@ -298,10 +304,11 @@ public class ASTOperationRecorder {
 	/**
 	 * This method assumes that batchTextChanges contains 0 or 1 text changes, and 0 is allowed only
 	 * when the inference is in the problem mode.
-	 * 
-	 * @param isForced
-	 */
-	private void flushSingleBatchTextChange(boolean isForced) {
+	 *
+     * @param isForced
+     * @param iASTObj
+     */
+	private void flushSingleBatchTextChange(boolean isForced, InferredAST iASTObj) {
 		CoherentTextChange lastTextChange= batchTextChanges.size() == 1 ? batchTextChanges.get(0) : null;
 		if (!Configuration.isInRefactoringInferenceMode && lastTextChange != null &&
 				!lastTextChange.isConflictEditorChange()) {
@@ -312,7 +319,7 @@ public class ASTOperationRecorder {
 		} else {
 			ASTOperationInferencer astOperationInferencer= new ASTOperationInferencer(lastTextChange);
 			if (isForcedOrSafeFlushing(isForced, astOperationInferencer)) {
-                inferViaChangeDistiller(astOperationInferencer);
+                inferViaGumTree(astOperationInferencer, iASTObj);
 				//inferAndRecordASTOperations(astOperationInferencer);
 			} else {
 				enterInProblemMode();
@@ -320,7 +327,20 @@ public class ASTOperationRecorder {
 		}
 	}
 
-    private void inferViaChangeDistiller(ASTOperationInferencer astOperationInferencer){
+    private void inferViaGumTree(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj) {
+        if(astOperationInferencer.getOldRootNode().getLength()>0) {
+
+            System.out.println(":::::::::::START AST:::::::::::");
+            System.out.println("*************FIRST*************");
+            System.out.println(astOperationInferencer.getOldRootNode().toString());
+            System.out.println("*************SECOND************");
+            System.out.println(astOperationInferencer.getNewRootNode().toString());
+            JSONDiff jsDiff = new JSONDiff(astOperationInferencer.getOldRootNode().toString(), astOperationInferencer.getNewRootNode().toString(), ".java");
+            jsDiff.start();
+        }
+    }
+
+    private void inferViaChangeDistiller(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj){
         File oldSourceTmpFile = null;
         File newSourceTmpFile = null;
         //write it
@@ -353,7 +373,7 @@ public class ASTOperationRecorder {
 
         List<SourceCodeChange> changes = distiller.getSourceCodeChanges();
         if(changes != null) {
-            System.out.println("****AST CHANGES****");
+            //System.out.println("****AST CHANGES****");
             JSONArray jArr = new JSONArray();
             for(SourceCodeChange change : changes) {
 
@@ -364,15 +384,23 @@ public class ASTOperationRecorder {
                 jsonChange.put("fParentEntity",change.getParentEntity());
 
                 jArr.add(jsonChange);
-                System.out.println(jsonChange);
-                System.out.println("######END AST CHANGES#######");
-                // see Javadocs for more information
+//                System.out.println(jsonChange);
+//                System.out.println("######END AST CHANGES#######");
+//                // see Javadocs for more information
             }
-            System.out.println("AllJSONChanges");
+            //System.out.println("AllJSONChanges");
             JSONObject jo = new JSONObject();
             jo.put("Source","InferedAST");
             jo.put("InferedChanges",jArr);
-            System.out.println(jo);
+           // System.out.println(jo);
+
+            inferredASTObjects = jo;
+
+            if(jArr.toArray().length>0){
+                iASTObj.setInferredAST(jArr);
+            }
+
+
         }
     }
 
@@ -380,7 +408,7 @@ public class ASTOperationRecorder {
 		return isForced || !astOperationInferencer.isProblematicInference();
 	}
 
-	private void flushBatchBackup(boolean isForced, boolean isGluingFlush) {
+	private void flushBatchBackup(boolean isForced, boolean isGluingFlush, InferredAST iASTObj) {
 		//First, make a copy of the backed up document events since each flushing cleans the field 
 		//batchDocumentEventsLastIterationBackup.
 		List<DocumentEventDescriptor> documentEventsBackup= new LinkedList<DocumentEventDescriptor>();
@@ -389,20 +417,20 @@ public class ASTOperationRecorder {
 		batchTextChanges.clear();
 		batchTextChanges.addAll(batchTextChangesBackup);
 		currentIndexToGlueWith= 0;
-		flushCurrentTextChanges(isForced);
+		flushCurrentTextChanges(isForced, iASTObj);
 		//Finally, process anew the document events from the last, incomplete batch iteration.
 		boolean currentIsReplaying= ConflictEditorTextChangeOperation.isReplaying;
 		for (DocumentEventDescriptor eventDescriptor : documentEventsBackup) {
 			ConflictEditorTextChangeOperation.isReplaying= eventDescriptor.isConflictEditorChange;
-			beforeDocumentChange(eventDescriptor.documentEvent, currentEditedFilePath);
+			beforeDocumentChange(eventDescriptor.documentEvent, currentEditedFilePath, iASTObj);
 		}
 		ConflictEditorTextChangeOperation.isReplaying= currentIsReplaying;
 		if (!isGluingFlush) {
-			flushCurrentTextChanges(isForced);
+			flushCurrentTextChanges(isForced, iASTObj);
 		}
 	}
 
-	private void flushBatchAsSeparateChanges(boolean isForced) {
+	private void flushBatchAsSeparateChanges(boolean isForced, InferredAST iASTObj) {
 		//Make a copy of the batch text changes since each flushing cleans the field batchTextChanges.
 		List<CoherentTextChange> batchChangesToFlush= new LinkedList<CoherentTextChange>();
 		batchChangesToFlush.addAll(batchTextChanges);
@@ -412,7 +440,7 @@ public class ASTOperationRecorder {
 		for (int i= 0; i < batchChangesToFlush.size(); i++) {
 			CoherentTextChange separateChange= createSeparateChange(batchChangesToFlush, i, changedText);
 			batchTextChanges.add(separateChange);
-			flushCurrentTextChanges(isForced);
+			flushCurrentTextChanges(isForced, iASTObj);
 			//The initial text of the subsequent change is the final text of the previous change.
 			changedText= separateChange.getFinalDocumentText();
 		}

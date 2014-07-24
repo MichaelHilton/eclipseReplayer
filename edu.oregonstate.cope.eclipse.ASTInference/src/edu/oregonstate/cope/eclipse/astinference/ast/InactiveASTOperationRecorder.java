@@ -4,6 +4,7 @@
 package edu.oregonstate.cope.eclipse.astinference.ast;
 
 
+import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.InferredAST;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.DocumentEvent;
@@ -16,12 +17,12 @@ import org.eclipse.jface.text.DocumentEvent;
 public class InactiveASTOperationRecorder extends ASTOperationRecorder {
 
 	@Override
-	public void beforeDocumentChange(DocumentEvent event, String fileID) {
+	public void beforeDocumentChange(DocumentEvent event, String fileID, InferredAST iASTObj) {
 		//do nothing
 	}
 
 	@Override
-	public void flushCurrentTextChanges(boolean isForced) {
+	public void flushCurrentTextChanges(boolean isForced, InferredAST iASTObj) {
 		//do nothing
 	}
 
