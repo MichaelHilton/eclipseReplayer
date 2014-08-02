@@ -3,9 +3,7 @@
  */
 package edu.oregonstate.cope.eclipse.astinference.ast;
 
-import ch.uzh.ifi.seal.changedistiller.ChangeDistiller;
-import ch.uzh.ifi.seal.changedistiller.distilling.FileDistiller;
-import ch.uzh.ifi.seal.changedistiller.model.entities.SourceCodeChange;
+
 import edu.illinois.codingtracker.helpers.Configuration;
 import edu.illinois.codingtracker.helpers.ResourceHelper;
 import edu.illinois.codingtracker.helpers.StringHelper;
@@ -327,7 +325,7 @@ public class ASTOperationRecorder {
 		}
 	}
 
-    private void inferViaGumTree(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj) {
+    public void inferViaGumTree(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj) {
         if(astOperationInferencer.getOldRootNode().getLength()>0) {
 
             System.out.println(":::::::::::START AST:::::::::::");
@@ -340,69 +338,69 @@ public class ASTOperationRecorder {
         }
     }
 
-    private void inferViaChangeDistiller(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj){
-        File oldSourceTmpFile = null;
-        File newSourceTmpFile = null;
-        //write it
-        BufferedWriter bw = null;
-        try {
-            oldSourceTmpFile = File.createTempFile("oldSource", ".tmp");
-            bw = new BufferedWriter(new FileWriter(oldSourceTmpFile));
-            bw.write(astOperationInferencer.getOldRootNode().toString());
-            bw.close();
-
-            newSourceTmpFile = File.createTempFile("newSource", ".tmp");
-            bw = new BufferedWriter(new FileWriter(newSourceTmpFile));
-            bw.write(astOperationInferencer.getNewRootNode().toString());
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        FileDistiller distiller = ChangeDistiller.createFileDistiller(ChangeDistiller.Language.JAVA);
-        try {
-            distiller.extractClassifiedSourceCodeChanges(oldSourceTmpFile, newSourceTmpFile);
-        } catch(Exception e) {
-    /* An exception most likely indicates a bug in ChangeDistiller. Please file a
-       bug report at https://bitbucket.org/sealuzh/tools-changedistiller/issues and
-       attach the full stack trace along with the two files that you tried to distill. */
-            System.err.println("Warning: error while change distilling. " + e.getMessage());
-        }
-
-        System.out.println("Old: "+astOperationInferencer.getOldRootNode());
-        System.out.println("New: "+astOperationInferencer.getNewRootNode());
-
-        List<SourceCodeChange> changes = distiller.getSourceCodeChanges();
-        if(changes != null) {
-            //System.out.println("****AST CHANGES****");
-            JSONArray jArr = new JSONArray();
-            for(SourceCodeChange change : changes) {
-
-                JSONObject jsonChange = new JSONObject();
-                jsonChange.put("fChangeType",change.getChangeType());
-                jsonChange.put("fRootEntity",change.getRootEntity());
-                jsonChange.put("fChangedEntity",change.getChangedEntity());
-                jsonChange.put("fParentEntity",change.getParentEntity());
-
-                jArr.add(jsonChange);
-//                System.out.println(jsonChange);
-//                System.out.println("######END AST CHANGES#######");
-//                // see Javadocs for more information
-            }
-            //System.out.println("AllJSONChanges");
-            JSONObject jo = new JSONObject();
-            jo.put("Source","InferedAST");
-            jo.put("InferedChanges",jArr);
-           // System.out.println(jo);
-
-            inferredASTObjects = jo;
-
-            if(jArr.toArray().length>0){
-                iASTObj.setInferredAST(jArr);
-            }
-
-
-        }
-    }
+//    private void inferViaChangeDistiller(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj){
+//        File oldSourceTmpFile = null;
+//        File newSourceTmpFile = null;
+//        //write it
+//        BufferedWriter bw = null;
+//        try {
+//            oldSourceTmpFile = File.createTempFile("oldSource", ".tmp");
+//            bw = new BufferedWriter(new FileWriter(oldSourceTmpFile));
+//            bw.write(astOperationInferencer.getOldRootNode().toString());
+//            bw.close();
+//
+//            newSourceTmpFile = File.createTempFile("newSource", ".tmp");
+//            bw = new BufferedWriter(new FileWriter(newSourceTmpFile));
+//            bw.write(astOperationInferencer.getNewRootNode().toString());
+//            bw.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        FileDistiller distiller = ChangeDistiller.createFileDistiller(ChangeDistiller.Language.JAVA);
+//        try {
+//            distiller.extractClassifiedSourceCodeChanges(oldSourceTmpFile, newSourceTmpFile);
+//        } catch(Exception e) {
+//    /* An exception most likely indicates a bug in ChangeDistiller. Please file a
+//       bug report at https://bitbucket.org/sealuzh/tools-changedistiller/issues and
+//       attach the full stack trace along with the two files that you tried to distill. */
+//            System.err.println("Warning: error while change distilling. " + e.getMessage());
+//        }
+//
+//        System.out.println("Old: "+astOperationInferencer.getOldRootNode());
+//        System.out.println("New: "+astOperationInferencer.getNewRootNode());
+//
+//        List<SourceCodeChange> changes = distiller.getSourceCodeChanges();
+//        if(changes != null) {
+//            //System.out.println("****AST CHANGES****");
+//            JSONArray jArr = new JSONArray();
+//            for(SourceCodeChange change : changes) {
+//
+//                JSONObject jsonChange = new JSONObject();
+//                jsonChange.put("fChangeType",change.getChangeType());
+//                jsonChange.put("fRootEntity",change.getRootEntity());
+//                jsonChange.put("fChangedEntity",change.getChangedEntity());
+//                jsonChange.put("fParentEntity",change.getParentEntity());
+//
+//                jArr.add(jsonChange);
+////                System.out.println(jsonChange);
+////                System.out.println("######END AST CHANGES#######");
+////                // see Javadocs for more information
+//            }
+//            //System.out.println("AllJSONChanges");
+//            JSONObject jo = new JSONObject();
+//            jo.put("Source","InferedAST");
+//            jo.put("InferedChanges",jArr);
+//           // System.out.println(jo);
+//
+//            inferredASTObjects = jo;
+//
+//            if(jArr.toArray().length>0){
+//                iASTObj.setInferredAST(jArr);
+//            }
+//
+//
+//        }
+//    }
 
 	private boolean isForcedOrSafeFlushing(boolean isForced, ASTOperationInferencer astOperationInferencer) {
 		return isForced || !astOperationInferencer.isProblematicInference();

@@ -8,10 +8,12 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
  edu.oregonstate.cope.eclipse.helpers;bundle-version="1.0.0",
- edu.oregonstate.cope.eclipse.operations;bundle-version="1.0.0"
+ edu.oregonstate.cope.eclipse.operations;bundle-version="1.0.0",
+ org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: edu.oregonstate.cope.eclipse.astinference.ast
+Export-Package: edu.oregonstate.cope.eclipse.astinference.ast,
+ edu.oregonstate.cope.eclipse.astinference.ast.inferencing
 Import-Package: edu.oregonstate.cope.clientRecorder,
  edu.oregonstate.cope.clientRecorder.util,
  org.json.simple

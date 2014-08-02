@@ -37,6 +37,19 @@ public class ASTDeserializationTest {
 	}
 
 	public void assertASTDeserializationForBasicFile(List<UserOperation> userOperations) {
+		int expectedEvents = 20;
+		int expectedAstDeleted = 0;
+		int expectedASTEvents = 15;
+		int expectedAstChanged = 0;
+		int expectedASTAdds = 15;
+
+		performCheckofASTOps(userOperations, expectedEvents,
+				expectedAstDeleted, expectedASTEvents, expectedASTAdds , expectedAstChanged);
+	}
+
+	private void performCheckofASTOps(List<UserOperation> userOperations,
+			int expectedEvents, int expectedAstDeleted, int expectedASTEvents, int expectedASTAdds,
+			int expectedAstChanged) {
 		int totalEvents = 0;
 		int astEvents = 0;
 		int astAdded = 0;
@@ -64,10 +77,49 @@ public class ASTDeserializationTest {
 			totalEvents ++;
 		}
 		
-		assertEquals(43, totalEvents);
-		assertEquals(38, astEvents);
-		assertEquals(20, astAdded);
-		assertEquals(2, astChanged);
-		assertEquals(16, astDeleted);
+		assertEquals(expectedEvents, totalEvents);
+		assertEquals(expectedASTEvents, astEvents);
+		assertEquals(expectedASTAdds, astAdded);
+		assertEquals(expectedAstChanged, astChanged);
+		assertEquals(expectedAstDeleted, astDeleted);
+	}
+
+	public void assertASTDeserializationForGoLFile(
+			List<UserOperation> userOperations) {
+		int expectedEvents = 853;
+		int expectedASTEvents = 553;
+		int expectedASTAdds = 552;
+		int expectedAstChanged = 1;
+		int expectedAstDeleted = 0;
+
+		performCheckofASTOps(userOperations, expectedEvents,
+				expectedAstDeleted, expectedASTEvents, expectedASTAdds , expectedAstChanged);
+		
+	}
+
+	public void assertASTDeserializationForLyFile(
+			List<UserOperation> userOperations) {
+		int expectedEvents = 210;
+		int expectedASTEvents = 107;
+		int expectedASTAdds = 90;
+		int expectedAstChanged = 3;
+		int expectedAstDeleted = 14;
+
+		performCheckofASTOps(userOperations, expectedEvents,
+				expectedAstDeleted, expectedASTEvents, expectedASTAdds , expectedAstChanged);
+		
+	}
+
+	public void assertASTDeserializationForMineFFile(
+			List<UserOperation> userOperations) {
+		int expectedEvents = 946;
+		int expectedASTEvents = 489;
+		int expectedASTAdds = 466;
+		int expectedAstChanged = 0;
+		int expectedAstDeleted = 23;
+
+		performCheckofASTOps(userOperations, expectedEvents,
+				expectedAstDeleted, expectedASTEvents, expectedASTAdds , expectedAstChanged);
+		
 	}
 }

@@ -44,6 +44,7 @@ import edu.illinois.codingtracker.operations.resources.ReorganizedResourceOperat
 import edu.illinois.codingtracker.operations.resources.ResourceOperation;
 import edu.illinois.codingtracker.operations.textchanges.TextChangeOperation;
 import edu.oregonstate.cope.eclipse.astinference.ast.ASTInferencerFacade;
+import edu.oregonstate.cope.eclipse.astinference.ast.inferencing.InferredAST;
 
 /**
  * 
@@ -494,7 +495,8 @@ public class UserOperationReplayer {
 				currentUserOperation.replay();
 			}
 			
-			astInferencer.flushCurrentTextChanges(currentUserOperation, iASTObj);
+			InferredAST iASTObj = null;
+			astInferencer.flushCurrentTextChanges(currentUserOperation, iASTObj );
 			astInferencer.handleResourceOperation(currentUserOperation);
 			
 			//currentEditor= EditorHelper.getActiveEditor();
