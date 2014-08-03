@@ -317,7 +317,7 @@ public class ASTOperationRecorder {
 		} else {
 			ASTOperationInferencer astOperationInferencer= new ASTOperationInferencer(lastTextChange);
 			if (isForcedOrSafeFlushing(isForced, astOperationInferencer)) {
-                inferViaGumTree(astOperationInferencer, iASTObj);
+                JSONArray jArr = inferViaGumTree(astOperationInferencer, iASTObj);
 				//inferAndRecordASTOperations(astOperationInferencer);
 			} else {
 				enterInProblemMode();
@@ -325,7 +325,7 @@ public class ASTOperationRecorder {
 		}
 	}
 
-    public void inferViaGumTree(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj) {
+    public JSONArray inferViaGumTree(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj) {
         if(astOperationInferencer.getOldRootNode().getLength()>0) {
 
             System.out.println(":::::::::::START AST:::::::::::");
@@ -334,8 +334,12 @@ public class ASTOperationRecorder {
             System.out.println("*************SECOND************");
             System.out.println(astOperationInferencer.getNewRootNode().toString());
             JSONDiff jsDiff = new JSONDiff(astOperationInferencer.getOldRootNode().toString(), astOperationInferencer.getNewRootNode().toString(), ".java");
-            jsDiff.start();
+            JSONArray ASTArr = jsDiff.start();
+            //System.out.println(ASTArr);
+            return ASTArr;
+            //jsDiff.toString();
         }
+        return null;
     }
 
 //    private void inferViaChangeDistiller(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj){
