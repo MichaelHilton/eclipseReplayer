@@ -333,14 +333,19 @@ public class ASTOperationRecorder {
             System.out.println(astOperationInferencer.getOldRootNode().toString());
             System.out.println("*************SECOND************");
             System.out.println(astOperationInferencer.getNewRootNode().toString());
-            JSONDiff jsDiff = new JSONDiff(astOperationInferencer.getOldRootNode().toString(), astOperationInferencer.getNewRootNode().toString(), ".java");
-            JSONArray ASTArr = jsDiff.start();
+            JSONArray ASTArr = calcASTDiffOnTwoStrings(astOperationInferencer.getOldRootNode().toString(), astOperationInferencer.getNewRootNode().toString());
             //System.out.println(ASTArr);
             return ASTArr;
             //jsDiff.toString();
         }
         return null;
     }
+
+	public JSONArray calcASTDiffOnTwoStrings(String oldStr, String newStr) {
+		JSONDiff jsDiff = new JSONDiff(oldStr, newStr, ".java");
+		JSONArray ASTArr = jsDiff.start();
+		return ASTArr;
+	}
 
 //    private void inferViaChangeDistiller(ASTOperationInferencer astOperationInferencer, InferredAST iASTObj){
 //        File oldSourceTmpFile = null;
