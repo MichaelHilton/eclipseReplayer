@@ -39,56 +39,44 @@ public class ASTInferenceUnitTests {
 		ASTOperationRecorder astRecorder = ASTOperationRecorder.getInstance();
 		JSONArray calculatedDiff = astRecorder.calcASTDiffOnTwoStrings(preTestText,postTestText);
 		
-//		String preTestText ="int i = 0;";
-//		String postTestText = "";
-//		InferredAST iASTObj = new InferredAST();
-//		
-//		//mock creation
-//		ASTOperationInferencer mockedInferencer = mock(ASTOperationInferencer.class);
-//		//using mock object
-//		//when(i.next()).thenReturn("Hello").thenReturn("World");
-//		ASTNode mockedBeforeAST = mock(ASTNode.class);
-//		ASTNode mockedAfterAST = mock(ASTNode.class);
-//		when(mockedBeforeAST.getLength()).thenReturn(10);
-//		//when(mockedBeforeAST.getAST()).thenReturn("\npublic class testGoL {\n "+preTestText+" \n}\n");
-////		when(mockedBeforeAST.getLength()).thenReturn(10);
-//		
-//		when(mockedInferencer.getOldRootNode()).thenReturn(mockedBeforeAST);
-////		when(mockedInferencer.getOldRootNode().getLength()).thenReturn(10);
-//		when(mockedInferencer.getNewRootNode()).thenReturn(mockedAfterAST);
-//		
-//		ASTOperationRecorder astRecorder = ASTOperationRecorder.getInstance();
-////		
-//		JSONArray returnedASTArray = astRecorder.inferViaGumTree(mockedInferencer, iASTObj);
-//		//return jArr;
-//		 
+		JSONObject firstArrayElement = (JSONObject) calculatedDiff.get(0);
+		assertEquals(firstArrayElement.size(),6);
+		assertEquals(firstArrayElement.get("Action").toString(),"DEL");
+
+	}
+	
+	@Test
+	public void testModifyStatement() {
+		String preTestText ="\npublic class testGoL {\n int i = 10;\n \n}\n" ;
+		String postTestText = "\npublic class testGoL {\n int i = 20;\n \n}\n" ;
 		
-//		
-//		Document document = new Document("initialDoc");
-//		DocumentEvent event = new DocumentEvent(new Document("\npublic class testGoL {\n int i = 10;\n \n}\n"), 0, 1, "");
-//		//DocumentEvent event = new DocumentEvent(new Document("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 2, "abcdefghijklmnopqrstuvwxyz");
-//
-//		long timestamp = 1;
-//		CoherentTextChange oneTextChange = new CoherentTextChange(event, ConflictEditorTextChangeOperation.isReplaying, timestamp );
-//		ASTOperationInferencer astOperationInferencer = new ASTOperationInferencer(oneTextChange);
-//		
-//
-//		ASTOperationRecorder astRecorder = ASTOperationRecorder.getInstance();
-//		
-//		JSONArray returnedASTArray = astRecorder.inferViaGumTree(astOperationInferencer, iASTObj);
-//		//return jArr;
-//		
-//		
-////		JSONArray returnedASTArray = textChangeTest(preTestText, postTestText,iASTObj);
-//		JSONObject firstArrayElement = (JSONObject) returnedASTArray.get(0);
-//		//{"parentID":7,"Action":"INS","TypeLabel":"FieldDeclaration","Node":"","Position":25,"Id":6}
-////		System.out.println(firstArrayElement.get("A"));
-//		
-//		
-//		
-//		assertEquals(firstArrayElement.get("Action").toString(),"DEL");
+		ASTOperationRecorder astRecorder = ASTOperationRecorder.getInstance();
+		JSONArray calculatedDiff = astRecorder.calcASTDiffOnTwoStrings(preTestText,postTestText);
+		
+		JSONObject firstArrayElement = (JSONObject) calculatedDiff.get(0);
+		assertEquals(1,calculatedDiff.size());
+		assertEquals("UPD",firstArrayElement.get("Action").toString());
+
 	}
 
+	
+	@Test
+	public void testAddFunction() {
+		String preTestText ="\npublic class testGoL {\n \n \n}\n" ;
+		String postTestText = "\npublic class testGoL {\n public void testMethod(){\n } \n}\n" ;
+		
+		ASTOperationRecorder astRecorder = ASTOperationRecorder.getInstance();
+		JSONArray calculatedDiff = astRecorder.calcASTDiffOnTwoStrings(preTestText,postTestText);
+		
+		JSONObject firstArrayElement = (JSONObject) calculatedDiff.get(0);
+		assertEquals(5,calculatedDiff.size());
+		assertEquals("INS",firstArrayElement.get("Action").toString());
+		assertEquals("MethodDeclaration",firstArrayElement.get("TypeLabel").toString());
+		//MethodDeclaration  //TypeLabel
+
+	}
+
+	
 	private JSONArray textChangeTest(String preTestText, String postTestText, InferredAST iASTObj) {
 		Document document = new Document("initialDoc");
 		DocumentEvent event = new DocumentEvent(new Document("\npublic class testGoL {\n "+preTestText+" \n}\n"), 0, 20, "\npublic class testGoL {\n "+postTestText+" \n}\n");
